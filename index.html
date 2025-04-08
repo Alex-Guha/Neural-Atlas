@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Neural Atlas</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="main.js"></script>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+
+    <!-- LaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+
+    <!-- plotting -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div id="main-container">
+        <svg id="svg">
+            <g id="content-layer"></g>
+            <g id="navigation-layer"></g>
+        </svg>
+        <div id="sidebar">
+            <div id="info"></div>
+            <div id="references">
+                <h3>References</h3>
+                <ul id="references-list"></ul>
+            </div>
+        </div>
+    </div>
+</body>

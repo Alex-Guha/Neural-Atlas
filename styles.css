@@ -1,0 +1,233 @@
+:root {
+    --background-color: #1e1e1e;
+    --text-default-color: #e0e0e0;
+    --svg-background-color: #2a2a2a;
+    --info-background-color: #2a2a2a;
+    --reference-background-color: #2a2a2a;
+
+    --shape-fill-color: #3a3a3a;
+    --shape-stroke-color: #555;
+    --opacity: 0.5;
+
+    --arrow-color: #444;
+
+    --link-color: #00ffff;
+
+    --button-fill-color: #3a3a3a;
+    --button-stroke-color: #555;
+    --button-arrow-color: #e0e0e0;
+    --button-hover-fill-color: #4a4a4a;
+    --button-hover-arrow-color: #ffffff;
+    --disabled-button-fill-color: #2a2a2a;
+    --disabled-button-stroke-color: #3a3a3a;
+    --disabled-button-arrow-color: #4a4a4a;
+
+    --slider-background-color: #d0d0d0;
+    --slider-button-color: #3a3a3a;
+    --slider-checked-color: #00c0c0;
+
+    --scrollbar-background-color: #f1f1f1;
+    --scrollbar-button-color: #888;
+    --scrollbar-hover-color: #555;
+}
+
+body {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 350;
+    background-color: var(--background-color);
+    color: var(--text-default-color);
+    margin: 0;
+}
+
+#main-container {
+    display: flex;
+    flex-direction: row;
+    height: 98vh;
+    gap: 10px;
+    padding: 10px;
+    min-height: 500px;
+}
+
+#svg {
+    flex-grow: 1;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: var(--svg-background-color);
+    cursor: move;
+    min-width: 450px;
+}
+
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    min-width: 300px;
+    gap: 10px;
+}
+
+#info {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 10px;
+    overflow-y: auto;
+    background-color: var(--info-background-color);
+}
+
+#references {
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 10px 10px 10px 15px;
+    background-color: var(--reference-background-color);
+    border-radius: 10px;
+}
+
+#references h3 {
+    color: var(--text-default-color);
+    margin: 0;
+}
+
+#references-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    list-style-type: none;
+    overflow-y: auto;
+
+    margin: 0;
+    padding: 0;
+}
+
+#references-list a {
+    color: var(--text-default-color);
+    text-decoration: none;
+}
+
+#references-list a:hover {
+    color: var(--link-color);
+    text-decoration: underline;
+}
+
+.switch-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 18px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--slider-background-color);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 18px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--slider-button-color);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--slider-checked-color);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--slider-checked-color);
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(12px);
+    -ms-transform: translateX(12px);
+    transform: translateX(12px);
+}
+
+.nav-button {
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.latex-label:hover {
+    cursor: default;
+}
+
+.latex-label[data-link]:hover {
+    cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-background-color);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-button-color);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover-color);
+}
+
+select {
+    appearance: none;
+    border: 0;
+    font: inherit;
+    text-align: center;
+    padding-bottom: 2px;
+    background: var(--shape-fill-color);
+    color: var(--text-default-color);
+    border-radius: 18px;
+    cursor: pointer;
+    height: 24px;
+    flex-grow: 1;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+/*
+option:checked {
+    background-color: green;
+}
+*/
