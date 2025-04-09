@@ -40,7 +40,7 @@ export function attachDetailEventListeners(element) {
     element.on('dblclick', (event) => {
         event.stopPropagation();
         persistent = false;
-        navigateTo(element.attr('details'));
+        navigateTo(element.attr('data-details'));
     })
         .style('cursor', 'pointer');
 }

@@ -22,8 +22,8 @@ export function parseArchitecture(architectureName) {
     viewStructure = {};
     viewStructure[architectureName] = [];
 
-    architectures[architectureName].forEach((componentID) => {
-        buildComponent(componentID, architectureDetails, architectureName);
+    Object.entries(architectures[architectureName]).forEach(([componentID, swapModules]) => {
+        buildComponent(componentID, architectureDetails, architectureName, undefined, swapModules);
     });
     return architectureDetails;
 }
@@ -74,7 +74,7 @@ export function parseDetail(detailName) {
 }
 
 // Recursively builds the component and adds it to viewDetails. Used for both architectures and details.
-function buildComponent(componentID, viewDetails, viewName, parentComponentChain = []) {
+function buildComponent(componentID, viewDetails, viewName, parentComponentChain = [], swapModules = null) {
     const targetComponent = components[componentID];
     if (!targetComponent) {
         console.error(`Component ${componentID} not found.`);
@@ -94,35 +94,55 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
 
     // Stitch together content
     Object.entries(targetComponent.content).forEach(([itemID, item], index) => {
+        // If the item is a component, we need to build it recursively
         if (item.component) {
-            // Recursively combine in the component
+            const componentClass = item.class;
+
+            // If there are swappable modules specified in the architecture, and the component is swappable
+            if (swapModules && componentClass) {
+                const swapComponent = swapModules[componentClass];
+                // check if the swappable modules has a swap for this component
+                if (swapComponent) {
+                    buildComponent(
+                        swapComponent.at(0),
+                        viewDetails,
+                        viewName,
+                        componentChain,
+                        swapModules = swapComponent.at(1)
+                    );
+                    return;
+                }
+            }
+
+            // Architecture did not specify a swap or this component is not swappable, build normally
             buildComponent(item.component, viewDetails, viewName, componentChain);
-        } else {
-            // Allows for different components to use the same id for two items
-            const newItemID = `${componentID}_${itemID}`;
+            return;
+        }
 
-            // Handles when newItemID already exists in viewDetails.content, i.e. if a component is used multiple times in different locations
-            let i = 1;
-            while (viewDetails.content[newItemID]) {
-                newItemID = `${componentID}_${i}_${itemID}`;
-                i++;
-            }
+        // Allows for different components to use the same id for two items
+        const newItemID = `${componentID}_${itemID}`;
 
-            idMap[itemID] = newItemID;
+        // Handles when newItemID already exists in viewDetails.content, i.e. if a component is used multiple times in different locations
+        let i = 1;
+        while (viewDetails.content[newItemID]) {
+            newItemID = `${componentID}_${i}_${itemID}`;
+            i++;
+        }
 
-            viewDetails.content[newItemID] = item;
+        idMap[itemID] = newItemID;
 
-            // point the first element being added here to the last element in the previous component using 'previous'
-            if (index === 0 && Object.keys(viewDetails.content).length > 1) {
-                if (viewDetails.content[newItemID].previous) console.log(`Warning: First item ${itemID} in ${componentID} had a previous element`);
-                viewDetails.content[newItemID].previous = Object.keys(viewDetails.content).at(-2);
-            } else if (viewDetails.content[newItemID].previous)
-                viewDetails.content[newItemID].previous = idMap[item.previous];
+        viewDetails.content[newItemID] = item;
 
-            if (item.details) {
-                viewStructure[viewName].push(item.details);
-                views[item.details] = parseDetail(item.details);
-            }
+        // point the first element being added here to the last element in the previous component using 'previous'
+        if (index === 0 && Object.keys(viewDetails.content).length > 1) {
+            if (viewDetails.content[newItemID].previous) console.log(`Warning: First item ${itemID} in ${componentID} had a previous element`);
+            viewDetails.content[newItemID].previous = Object.keys(viewDetails.content).at(-2);
+        } else if (viewDetails.content[newItemID].previous)
+            viewDetails.content[newItemID].previous = idMap[item.previous];
+
+        if (item.details) {
+            viewStructure[viewName].push(item.details);
+            views[item.details] = parseDetail(item.details);
         }
     });
 

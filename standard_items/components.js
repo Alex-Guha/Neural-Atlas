@@ -9,6 +9,8 @@ Components:
     - Can be anything from a single subcomponent (with a detail reference) to complex subdiagrams
     - Components having components looks like: "placeholder_id: { component: 'ComponentName' }" in contents
         - Generally, the next item shouldn't have a previous set, but it can if nothing depends on the component.
+
+TODO Make a components folder in standard_items, and divide components by class into their own files. For example, MHA, MLA, etc. would go into attention.js.
 */
 
 export const testText = {
@@ -46,7 +48,7 @@ export const testText = {
                 { text: 'Right Lower', position: 'bottom-right', hideText: true },
             ],
         },
-        placeholder_id: { component: 'testLatex' }
+        placeholder_id: { component: 'testLatex', class: 'swappable' }
     }
 }
 
@@ -201,6 +203,21 @@ export const testEverything = {
                 hideArrows: true,
                 text: [{ text: 'Down Arrow', position: 'right' }],
                 extraLength: DEFAULTS.SHAPE.height / 2 - DEFAULTS.SHAPE.width / 2,
+            },
+        },
+    }
+}
+
+export const testSwappable = {
+    content: {
+        swap: {
+            width: DEFAULTS.SHAPE.width * 2, height: DEFAULTS.SHAPE.height,
+            info: "Test nested component swapping.",
+            shape: 'box',
+            opacity: 0.8,
+            text: {
+                latexText: 'box_{swap}',
+                position: 'center',
             },
         },
     }

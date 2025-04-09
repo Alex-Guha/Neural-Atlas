@@ -121,7 +121,7 @@ function renderElements(renderId) {
             contentLayer.selectAll('[data-info], [data-references]').each(function () {
                 attachElementEventListeners(d3.select(this));
             });
-            contentLayer.selectAll('[details]').each(function () {
+            contentLayer.selectAll('[data-details]').each(function () {
                 attachDetailEventListeners(d3.select(this));
             });
         }, delay);

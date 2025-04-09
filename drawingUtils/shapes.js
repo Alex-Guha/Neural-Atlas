@@ -25,7 +25,7 @@ export function drawSubcomponent(item) {
         }
 
         shape.attr('data-info', item.info)
-            .attr('details', item.details)
+            .attr('data-details', item.details)
             .attr('data-references', item.references)
             .attr('opacity', (1 - i * 0.1) * (item.opacity ?? theme.OPACITY))
             .attr('fill', theme.SHAPE_FILL)

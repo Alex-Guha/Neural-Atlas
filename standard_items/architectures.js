@@ -6,20 +6,65 @@ Architectures:
         - i.e. if multiple components want to branch off one.
         - Would require the ability to specify a previous in the architecture
 
-TODO In the future, should look more like: (swappable modules not yet implemented)
-architecture_name:
-    component_1_name:
-        swappable_module_x_in_the_component
-        swappable_module_y_in_the_component
-    component_2_name
-    component_3_name:
-        swappable_module_z_in_the_component
-    component_4_name
+TODO Write a parser for more abstract, yaml-like architecture definitions:
 
-Will need to change the parser to use this format.
+Abstract structure template:
+```
+architectureName:
+    componentName
+    componentName
+    componentName:
+        className: componentName
+            className: componentName
+        className: componentName
+    componentName
+```
+
+Equivalent intermediary structure template (what the parsing methods expect):
+```
+export const architectureName = {
+    componentName: {} | null,
+    componentName: null,
+    componentName: {
+        className: ['componentName', { className: 'componentName' }],
+        className: ['componentName', null]
+    },
+    componentName: null,
+}
+```
+
+Example:
+```
+llama2:
+    tokenizer
+    embedding
+    decoder:
+        attention: mha
+            normalization: layernorm
+        feedforward: gated
+    unembedding
+```
+```
+export const llama2 = {
+    tokenizer: {},
+    embedding: {},
+    decoder: {
+        attention: ['mha', { normalization: 'layernorm' }],
+        feedforward: ['gated', {}]
+    },
+    unembedding: {},
+}
+```
 */
 
-export const test = [
-    'testText',
-    'testEverything',
-]
+export const test = {
+    testText: null,
+    testEverything: null,
+}
+
+export const testswap = {
+    testText: {
+        swappable: ['testSwappable', null]
+    },
+    testEverything: null,
+}

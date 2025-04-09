@@ -30,7 +30,7 @@ export function drawConnection(arrow, previousItem, item) {
         .attr('stroke', theme.ARROW_COLOR)
         .attr('fill', theme.ARROW_COLOR)
         .attr('data-info', arrow.info)
-        .attr('details', arrow.details)
+        .attr('data-details', arrow.details)
         .attr('data-references', arrow.references);
 
     // Handle segmented arrows
