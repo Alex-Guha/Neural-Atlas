@@ -1,14 +1,14 @@
-import { allSettings, globalSettings, drawContent } from './main.js';
-import { updateInfo, updateReferences } from './sidebar.js';
+import { drawContent } from './render.js';
 import { navigateTo } from './navigation.js';
-import { applyTheme, invertTheme } from './utils/themeUtils.js';
-import * as DEFAULTS from './utils/defaults.js';
-import * as THEMES from './utils/themes.js';
-import { viewStructure } from './parser.js';
+import { updateInfo, updateReferences } from './sidebar.js';
+import { applyTheme, invertTheme } from '../utils/themeUtils.js';
 
-// Global State Variables
+import { globalState } from '../utils/state.js'
+import * as DEFAULTS from '../utils/defaults.js';
+import * as THEMES from '../utils/themes.js';
+
+// Local State Variable
 let persistent = false;
-export let theme = DEFAULTS.THEME;
 
 // Attach a click listener to the background (SVG) to reset the sidebar
 d3.select('#svg').on('click', resetSidebar);
@@ -37,10 +37,23 @@ export function attachReferenceEventListeners(element) {
 
 // Handles items with details (double-clickable items)
 export function attachDetailEventListeners(element) {
-    element.on('dblclick', (event) => {
+    element.on('dblclick touchend', (event) => {
         event.stopPropagation();
         persistent = false;
-        navigateTo(element.attr('data-details'));
+
+        // Handle touch events for mobile devices
+        if (event.type === 'touchend') {
+            const now = Date.now();
+            const timeSinceLastTouch = now - (element._lastTouch || 0);
+            element._lastTouch = now;
+
+            // If the time between two touch events is less than 300ms, treat it as a double-tap
+            if (timeSinceLastTouch < 300) {
+                navigateTo(element.attr('data-details'));
+            }
+        } else {
+            navigateTo(element.attr('data-details'));
+        }
     })
         .style('cursor', 'pointer');
 }
@@ -96,7 +109,7 @@ export const createSettings = (event) => {
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
 
-    allSettings.forEach(setting => {
+    globalState.allSettings.forEach(setting => {
         let container;
         if (setting.type === 'dropdown') {
             container = createDropdownSetting(setting, event);
@@ -128,27 +141,27 @@ function createDropdownSetting(setting, event) {
         select.appendChild(optionElement);
     });
 
-    select.value = globalSettings[setting.id] || 'default';
+    select.value = globalState.currentSettings[setting.id] || 'default';
 
     select.addEventListener('change', (e) => {
         const selectedTheme = e.target.value;
 
         // Reinvert the theme if it was inverted
-        if (globalSettings['invert-theme']) {
-            invertTheme(theme, document.documentElement);
+        if (globalState.currentSettings['invert-theme']) {
+            invertTheme(globalState.currentTheme, document.documentElement);
         }
 
         // Reset invert-theme setting and slider
-        globalSettings['invert-theme'] = false;
+        globalState.currentSettings['invert-theme'] = false;
         const invertThemeCheckbox = document.getElementById('invert-theme');
         if (invertThemeCheckbox) {
             invertThemeCheckbox.checked = false;
         }
 
-        globalSettings[setting.id] = selectedTheme;
+        globalState.currentSettings[setting.id] = selectedTheme;
 
-        theme = THEMES[selectedTheme] || DEFAULTS.THEME;
-        applyTheme(theme, document.documentElement);
+        globalState.currentTheme = THEMES[selectedTheme] || DEFAULTS.THEME;
+        applyTheme(globalState.currentTheme, document.documentElement);
         saveSettings();
         drawContent();
         createSettings(event);
@@ -173,7 +186,7 @@ function createToggleSetting(setting, event) {
     checkbox.type = 'checkbox';
     checkbox.id = setting.id;
 
-    checkbox.checked = globalSettings[setting.id];
+    checkbox.checked = globalState.currentSettings[setting.id];
 
     toggle_switch.appendChild(checkbox);
     toggle_switch.appendChild(slider);
@@ -187,10 +200,10 @@ function createToggleSetting(setting, event) {
     container.appendChild(label);
 
     checkbox.addEventListener('change', (e) => {
-        globalSettings[setting.id] = e.target.checked;
+        globalState.currentSettings[setting.id] = e.target.checked;
 
         if (setting.id === 'invert-theme') {
-            invertTheme(theme, document.documentElement);
+            invertTheme(globalState.currentTheme, document.documentElement);
             drawContent();
             createSettings(event);
         } else if (setting.noRedraw ?? true) {
@@ -223,23 +236,23 @@ export const showViews = (event) => {
     treeContainer.className = 'view-tree';
 
     // Future TODO
-    // This logic is a bit overkill right now, since the root view will always be the first one in viewStructure
+    // This logic is a bit overkill right now, since the root view will always be the first one in globalState.viewStructure
     // But, when we add more architectures and expand the view navigator, this might be useful
 
     // Find root views (those that don't appear as children in any other view)
     const allChildViews = new Set();
-    Object.values(viewStructure).forEach(children => {
+    Object.values(globalState.viewStructure).forEach(children => {
         children.forEach(child => allChildViews.add(child));
     });
 
-    const rootViews = Object.keys(viewStructure).filter(view => !allChildViews.has(view));
+    const rootViews = Object.keys(globalState.viewStructure).filter(view => !allChildViews.has(view));
 
     // If no root views are found, use all parent views
-    const startViews = rootViews.length > 0 ? rootViews : Object.keys(viewStructure);
+    const startViews = rootViews.length > 0 ? rootViews : Object.keys(globalState.viewStructure);
 
     // Build the tree structure
     startViews.forEach(view => {
-        const viewItem = buildViewTree(view, viewStructure);
+        const viewItem = buildViewTree(view);
         treeContainer.appendChild(viewItem);
     });
 
@@ -248,7 +261,7 @@ export const showViews = (event) => {
 
 // TODO work on the UI for this a bit
 // Helper function to build the tree structure recursively
-function buildViewTree(viewName, viewStructure) {
+function buildViewTree(viewName) {
     const viewContainer = document.createElement('div');
     viewContainer.className = 'view-container';
 
@@ -257,14 +270,14 @@ function buildViewTree(viewName, viewStructure) {
     viewRow.style.display = 'flex';
 
     // Create expand/collapse icon if view has children
-    if (viewStructure[viewName] && viewStructure[viewName].length > 0) {
+    if (globalState.viewStructure[viewName] && globalState.viewStructure[viewName].length > 0) {
         const expandIcon = document.createElement('span');
         expandIcon.className = 'expand-icon';
         expandIcon.textContent = '▶';
         expandIcon.style.cursor = 'pointer';
         expandIcon.style.marginTop = '2px';
         expandIcon.style.marginRight = '5px';
-        expandIcon.style.color = theme.TEXT_COLOR;
+        expandIcon.style.color = globalState.currentTheme.TEXT_COLOR;
         expandIcon.style.fontSize = '0.8em';
         expandIcon.style.transition = 'transform 0.2s';
 
@@ -275,8 +288,8 @@ function buildViewTree(viewName, viewStructure) {
         childrenContainer.style.display = 'none';
 
         // Build child views
-        viewStructure[viewName].forEach(childView => {
-            const childItem = buildViewTree(childView, viewStructure);
+        globalState.viewStructure[viewName].forEach(childView => {
+            const childItem = buildViewTree(childView, globalState.viewStructure);
             childrenContainer.appendChild(childItem);
         });
 
@@ -320,18 +333,18 @@ function buildViewTree(viewName, viewStructure) {
 
 // Load settings from localStorage
 export function loadSettings() {
-    const savedSettings = JSON.parse(localStorage.getItem('globalSettings')) || {};
+    const savedSettings = JSON.parse(localStorage.getItem('currentSettings')) || {};
     Object.keys(savedSettings).forEach(key => {
-        globalSettings[key] = savedSettings[key];
+        globalState.currentSettings[key] = savedSettings[key];
     });
 
     // Load the saved theme directly
-    theme = JSON.parse(localStorage.getItem('theme')) || DEFAULTS.THEME;
-    applyTheme(theme, document.documentElement);
+    globalState.currentTheme = JSON.parse(localStorage.getItem('currentTheme')) || DEFAULTS.THEME;
+    applyTheme(globalState.currentTheme, document.documentElement);
 }
 
 // Save settings and theme to localStorage
 function saveSettings() {
-    localStorage.setItem('globalSettings', JSON.stringify(globalSettings));
-    localStorage.setItem('theme', JSON.stringify(theme)); // Save the theme object
+    localStorage.setItem('currentSettings', JSON.stringify(globalState.currentSettings));
+    localStorage.setItem('currentTheme', JSON.stringify(globalState.currentTheme));
 }

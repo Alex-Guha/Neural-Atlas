@@ -1,54 +1,54 @@
-import { drawContent } from './main.js';
-import { createSettings, theme, showViews } from './events.js';
-import * as details from './standard_items/details.js';
-import * as architectures from './standard_items/architectures.js';
-import { resetZoom } from './utils/zoom.js';
-import { DEFAULT_VIEW } from './utils/defaults.js';
+import { drawContent } from './render.js';
+import { createSettings, showViews } from './events.js';
 import { parseArchitecture, parseDetail } from './parser.js';
+import { resetZoom } from '../utils/zoom.js';
 
-const navigationLayer = d3.select("#navigation-layer");
+import { DEFAULT_VIEW } from '../utils/defaults.js';
+import { globalState } from '../utils/state.js'
 
-// These only store pointers, fortunately
-let undoNavigationHistory = [];
-let redoNavigationHistory = [];
+import * as details from '../standard_items/details.js';
+import * as architectures from '../standard_items/architectures.js';
 
-// Stores views so they don't need to be rebuilt every time
-export const views = {}
-views[DEFAULT_VIEW] = parseArchitecture(DEFAULT_VIEW);
+const navigation = d3.select("#navigation");
 
-// Global tracking for the current view
-export let currentView = views[DEFAULT_VIEW];
+// These don't want to be moved to state.js for whatever reason
+globalState.views[DEFAULT_VIEW] = parseArchitecture(DEFAULT_VIEW);
+globalState.currentView = globalState.views[DEFAULT_VIEW];
+
+// Local State Variables
+let undoHistory = [];
+let redoHistory = [];
 
 // Handles changing views
 export const navigateTo = (view) => {
-    if (!views[view]) {
+    if (!globalState.views[view]) {
         if (architectures[view])
-            views[view] = parseArchitecture(view);
+            globalState.views[view] = parseArchitecture(view);
         else if (details[view])
-            views[view] = parseDetail(view);
+            globalState.views[view] = parseDetail(view);
         else {
             console.error(`View ${view} not found.`);
             return;
         }
     }
-    undoNavigationHistory.push(currentView);
-    redoNavigationHistory = [];
-    currentView = views[view];
+    undoHistory.push(globalState.currentView);
+    redoHistory = [];
+    globalState.currentView = globalState.views[view];
     drawContent();
 };
 
 const navigateBack = () => {
-    if (undoNavigationHistory.length > 0) {
-        redoNavigationHistory.push(currentView);
-        currentView = undoNavigationHistory.pop();
+    if (undoHistory.length > 0) {
+        redoHistory.push(globalState.currentView);
+        globalState.currentView = undoHistory.pop();
         drawContent();
     }
 };
 
 const navigateForward = () => {
-    if (redoNavigationHistory.length > 0) {
-        undoNavigationHistory.push(currentView);
-        currentView = redoNavigationHistory.pop();
+    if (redoHistory.length > 0) {
+        undoHistory.push(globalState.currentView);
+        globalState.currentView = redoHistory.pop();
         drawContent();
     }
 };
@@ -65,16 +65,16 @@ export const drawNavigation = () => {
 
     };
 
-    navigationLayer.selectAll('.nav-button').remove();
+    navigation.selectAll('.nav-button').remove();
     drawButton('views-button', 0, svg_paths.dropdown, (event) => showViews(event), true);
-    drawButton('back-button', 50, svg_paths.back, () => navigateBack(), undoNavigationHistory.length > 0);
-    drawButton('forward-button', 100, svg_paths.forward, () => navigateForward(), redoNavigationHistory.length > 0);
+    drawButton('back-button', 50, svg_paths.back, () => navigateBack(), undoHistory.length > 0);
+    drawButton('forward-button', 100, svg_paths.forward, () => navigateForward(), redoHistory.length > 0);
     drawButton('reset-button', 150, svg_paths.reset, resetZoom, true);
     drawButton('settings-button', 200, svg_paths.settings, (event) => createSettings(event), true);
 };
 
 function drawButton(id, x, shape, clickHandler, isEnabled) {
-    const group = navigationLayer.append('g')
+    const group = navigation.append('g')
         .attr('class', 'nav-button')
         .attr('id', id)
         .attr('transform', `translate(${x + 5}, 5)`)
@@ -89,14 +89,14 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
         .attr('height', 40)
         .attr('rx', 5)
         .attr('ry', 5)
-        .attr('fill', isEnabled ? theme.BUTTON_FILL : theme.DISABLED_BUTTON_FILL)
-        .attr('stroke', isEnabled ? theme.BUTTON_STROKE : theme.DISABLED_BUTTON_STROKE);
+        .attr('fill', isEnabled ? globalState.currentTheme.BUTTON_FILL : globalState.currentTheme.DISABLED_BUTTON_FILL)
+        .attr('stroke', isEnabled ? globalState.currentTheme.BUTTON_STROKE : globalState.currentTheme.DISABLED_BUTTON_STROKE);
 
     // Button icon
     group.append('path')
         .attr('d', shape)
         .attr('fill', 'none')
-        .attr('stroke', isEnabled ? theme.BUTTON_ARROW : theme.DISABLED_BUTTON_ARROW)
+        .attr('stroke', isEnabled ? globalState.currentTheme.BUTTON_ARROW : globalState.currentTheme.DISABLED_BUTTON_ARROW)
         .attr('stroke-width', id === 'settings-button' ? 1.2 : id === 'views-button' ? 1 : 2)
         .attr('stroke-linecap', 'round')
         .attr('stroke-linejoin', 'round')
@@ -108,17 +108,17 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
 
         // Hover effect
         group.on('mouseover', function () {
-            d3.select(this).select('rect').attr('fill', theme.BUTTON_HOVER_FILL);
-            d3.select(this).select('path').attr('stroke', theme.BUTTON_HOVER_ARROW);
-            id === 'settings-button' || id === 'views-button' ? d3.select(this).select('path').attr('fill', theme.BUTTON_HOVER_ARROW) : null;
+            d3.select(this).select('rect').attr('fill', globalState.currentTheme.BUTTON_HOVER_FILL);
+            d3.select(this).select('path').attr('stroke', globalState.currentTheme.BUTTON_HOVER_ARROW);
+            id === 'settings-button' || id === 'views-button' ? d3.select(this).select('path').attr('fill', globalState.currentTheme.BUTTON_HOVER_ARROW) : null;
         });
 
         group.on('mouseout', function () {
-            d3.select(this).select('rect').attr('fill', theme.BUTTON_FILL);
+            d3.select(this).select('rect').attr('fill', globalState.currentTheme.BUTTON_FILL);
             if (id === 'settings-button' || id === 'views-button') {
                 d3.select(this).select('path').attr('fill', 'none');
             } else {
-                d3.select(this).select('path').attr('stroke', theme.BUTTON_ARROW);
+                d3.select(this).select('path').attr('stroke', globalState.currentTheme.BUTTON_ARROW);
             }
         });
     }

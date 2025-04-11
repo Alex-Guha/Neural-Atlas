@@ -1,10 +1,6 @@
-import { globalSettings } from '../main.js';
-import { currentView } from '../navigation.js';
-import { theme } from '../events.js';
+import { globalState } from '../utils/state.js';
 
-const contentLayer = d3.select("#content-layer");
-
-// TODO QoL Auto split text into multiple lines based on textObject width, if it exists
+const content = d3.select("#content");
 
 /**
  * Draws text relative the item.
@@ -18,8 +14,8 @@ export function drawText(item) {
 
     item.text.forEach(textObject => {
 
-        for (const setting of currentView.settings ?? []) {
-            if (textObject[setting.property] && globalSettings[setting.id]) return;
+        for (const setting of globalState.currentView.settings ?? []) {
+            if (textObject[setting.property] && globalState.currentSettings[setting.id]) return;
         }
 
         // Handle latex differently than normal text
@@ -41,7 +37,7 @@ export function drawText(item) {
         });
 
         // Render the text
-        contentLayer.append(() => (label));
+        content.append(() => (label));
 
         // After rendering, use the text's hieght and width to position it correctly relative to the item
         setTimeout(() => {
@@ -146,11 +142,11 @@ function createTextLabel(textObject) {
     return textElement;
 }
 
-// Helper that first looks for an integer between 1 and 4 to lookup the color in the theme, then falls back to assuming the color has been overridden and specified directly.
+// Helper that first looks for an integer between 1 and 4 to lookup the color in the globalState.currentTheme, then falls back to assuming the color has been overridden and specified directly.
 function colorSwitch(color) {
     return color
         ? (typeof color === 'number' && color >= 1 && color <= 4
-            ? theme.TEXT_COLOR[color - 1]
+            ? globalState.currentTheme.TEXT_COLOR[color - 1]
             : color
-        ) : theme.TEXT_COLOR[0];
+        ) : globalState.currentTheme.TEXT_COLOR[0];
 }

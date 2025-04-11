@@ -1,6 +1,6 @@
-import { theme } from '../events.js';
+import { globalState } from '../utils/state.js';
 
-const contentLayer = d3.select("#content-layer");
+const content = d3.select("#content");
 
 // Fairly self explanatory
 export function drawSubcomponent(item) {
@@ -27,14 +27,14 @@ export function drawSubcomponent(item) {
         shape.attr('data-info', item.info)
             .attr('data-details', item.details)
             .attr('data-references', item.references)
-            .attr('opacity', (1 - i * 0.1) * (item.opacity ?? theme.OPACITY))
-            .attr('fill', theme.SHAPE_FILL)
-            .attr('stroke', theme.SHAPE_STROKE);
+            .attr('opacity', (1 - i * 0.1) * (item.opacity ?? globalState.currentTheme.OPACITY))
+            .attr('fill', globalState.currentTheme.SHAPE_FILL)
+            .attr('stroke', globalState.currentTheme.SHAPE_STROKE);
     }
 }
 
 function drawBox(x, y, item) {
-    return contentLayer.append('rect')
+    return content.append('rect')
         .attr('x', x)
         .attr('y', y)
         .attr('width', item.width)
@@ -54,7 +54,7 @@ function drawTriangle(x, y, item) {
             [x + item.width, y + item.height],
         ];
 
-    return contentLayer.append('polygon')
+    return content.append('polygon')
         .attr('points', points.map(p => p.join(',')).join(' '));
 }
 
@@ -78,6 +78,6 @@ function drawTrapezoid(x, y, item) {
             [x + item.width, y],
         ];
 
-    return contentLayer.append('polygon')
+    return content.append('polygon')
         .attr('points', points.map(p => p.join(',')).join(' '));
 }

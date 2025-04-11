@@ -1,12 +1,13 @@
 import { attachReferenceEventListeners } from './events.js';
-import { currentView } from './navigation.js';
+
+import { globalState } from '../utils/state.js'
 
 // Creates the references box
 export function updateReferences(elementReferences = null) {
     const referencesList = document.getElementById('references-list');
     referencesList.innerHTML = '';
 
-    const refsToRender = JSON.parse(elementReferences) || currentView.references;
+    const refsToRender = JSON.parse(elementReferences) || globalState.currentView.references;
 
     if (refsToRender) {
         refsToRender.forEach(ref => {

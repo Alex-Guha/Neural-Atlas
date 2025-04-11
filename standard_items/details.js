@@ -15,7 +15,7 @@ Details:
 export const testSegmentedArrows = {
     content: {
         centerBox: {
-            x: 750, y: 150, // implicit + default 50, 100
+            x: 700, y: 150, // implicit + default 50, 100
             width: DEFAULTS.SHAPE.width * 2,
             shape: 'box',
             text: {

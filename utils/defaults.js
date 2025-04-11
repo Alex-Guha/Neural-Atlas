@@ -7,7 +7,6 @@ export const THEME = {
     INFO_BACKGROUND: '#2a2a2a',
     REFERENCE_BACKGROUND: '#2a2a2a',
 
-    // TODO QoL make elements with views (i.e. clickable) more noticeable, and add a notice at the top or bottom of the info box to tell the user the element is clickable
     SHAPE_FILL: '#3a3a3a',
     SHAPE_STROKE: '#555',
     OPACITY: 0.5,

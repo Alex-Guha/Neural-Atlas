@@ -1,10 +1,8 @@
-import * as details from './standard_items/details.js';
-import * as components from './standard_items/components.js';
-import * as architectures from './standard_items/architectures.js';
-import { views } from './navigation.js';
+import { globalState } from '../utils/state.js'
 
-// Used to display the view structure in the sidebar
-export let viewStructure = {};
+import * as details from '../standard_items/details.js';
+import * as components from '../standard_items/components.js';
+import * as architectures from '../standard_items/architectures.js';
 
 // Parses architectures (abstract definitions of Details) and creates the corresponding view
 export function parseArchitecture(architectureName) {
@@ -19,8 +17,8 @@ export function parseArchitecture(architectureName) {
         return architectureDetails;
     }
 
-    viewStructure = {};
-    viewStructure[architectureName] = [];
+    globalState.viewStructure = {};
+    globalState.viewStructure[architectureName] = [];
 
     Object.entries(architectures[architectureName]).forEach(([componentID, swapModules]) => {
         buildComponent(componentID, architectureDetails, architectureName, undefined, swapModules);
@@ -43,7 +41,7 @@ export function parseDetail(detailName) {
         content: {},
     }
 
-    viewStructure[detailName] = [];
+    globalState.viewStructure[detailName] = [];
 
     const idMap = {};
 
@@ -64,8 +62,8 @@ export function parseDetail(detailName) {
             if (detail.content[newItemID].previous) detail.content[newItemID].previous = idMap[item.previous];
 
             if (item.details) {
-                viewStructure[detailName].push(item.details);
-                views[item.details] = parseDetail(item.details);
+                globalState.viewStructure[detailName].push(item.details);
+                globalState.views[item.details] = parseDetail(item.details);
             }
         }
     });
@@ -141,8 +139,8 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
             viewDetails.content[newItemID].previous = idMap[item.previous];
 
         if (item.details) {
-            viewStructure[viewName].push(item.details);
-            views[item.details] = parseDetail(item.details);
+            globalState.viewStructure[viewName].push(item.details);
+            globalState.views[item.details] = parseDetail(item.details);
         }
     });
 

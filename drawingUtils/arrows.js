@@ -1,10 +1,9 @@
-import { globalSettings } from '../main.js';
-import { currentView } from '../navigation.js';
-import * as DEFAULTS from '../utils/defaults.js';
 import { drawText } from './text.js';
-import { theme } from '../events.js';
 
-const contentLayer = d3.select("#content-layer");
+import * as DEFAULTS from '../utils/defaults.js';
+import { globalState } from '../utils/state.js'
+
+const content = d3.select("#content");
 
 /**
  * Draws an arrow between previousItem and item.
@@ -12,8 +11,8 @@ const contentLayer = d3.select("#content-layer");
 */
 export function drawConnection(arrow, previousItem, item) {
 
-    for (const setting of currentView.settings ?? []) {
-        if (arrow[setting.property] && globalSettings[setting.id]) return;
+    for (const setting of globalState.currentView.settings ?? []) {
+        if (arrow[setting.property] && globalState.currentSettings[setting.id]) return;
     }
 
     // Makes these properties hierarchical. arrow > item > nonexistent
@@ -26,9 +25,9 @@ export function drawConnection(arrow, previousItem, item) {
     });
 
     // Create a group for the arrow
-    const arrowGroup = contentLayer.append('g')
-        .attr('stroke', theme.ARROW_COLOR)
-        .attr('fill', theme.ARROW_COLOR)
+    const arrowGroup = content.append('g')
+        .attr('stroke', globalState.currentTheme.ARROW_COLOR)
+        .attr('fill', globalState.currentTheme.ARROW_COLOR)
         .attr('data-info', arrow.info)
         .attr('data-details', arrow.details)
         .attr('data-references', arrow.references);
@@ -309,7 +308,7 @@ function createArrowhead(end, angle) {
 
     return d3.create('svg:path')
         .attr('d', arrowPath.toString())
-        .attr('fill', theme.ARROW_COLOR)
+        .attr('fill', globalState.currentTheme.ARROW_COLOR)
         .node();
 }
 
