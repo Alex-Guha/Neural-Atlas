@@ -5,11 +5,7 @@ Details:
     - Referenced by "details: detail_id" in an item
     - Generally complex diagrams
     - Can have settings and references
-    - Can be used either for a more detailed view of a component, or for lowest level (matrix) explanation
-        - i.e. we could have a Decoder-box component (for more abstract diagrams) that detail reference for Decoder,
-            which in turn here in details just contains a pointer to the actual Decoder component (like { component: 'Decoder' })
-        - So, in essence, Decoder can be incorporated either as abstract->detail or directly as a component of an architecture
-        - Keep in mind that the goal is to have such things be modular, so that even things within the component can be swapped out at the architecture level
+    - Can be used either for a more detailed view of a component or (usually) a matrix-level explanation
 */
 
 export const testSegmentedArrows = {

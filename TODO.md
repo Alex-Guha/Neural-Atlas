@@ -87,6 +87,7 @@ The code has been rewritten and significantly expanded.
 
 ### Write a README
 ### Write a proper roadmap
+### Write CONTRIBUTING
 
 ---
 
