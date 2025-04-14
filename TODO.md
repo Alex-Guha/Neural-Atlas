@@ -83,6 +83,9 @@ The code has been rewritten and significantly expanded.
 #### Make double-clickable items more noticeable, and add a notice at the top or bottom of the info box to tell the user the item is clickable
 #### Improve the UI for buildViewTree (events.js), offload css to styles.css
 #### Add a link to the github repo
+#### Allow for non-sequential component combination in architectures
+- i.e. if multiple components want to branch off one.
+- Would require the ability to specify a previous in the architecture
 
 
 ### Write a README

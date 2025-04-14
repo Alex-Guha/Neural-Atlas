@@ -1,13 +1,6 @@
 /*
-Architectures:
-    - Essentially an abstraction of details.
-    - Strictly constructed from existing components, with no subcomponents.
-    - TODO Allow for non-sequential component combination in the future
-        - i.e. if multiple components want to branch off one.
-        - Would require the ability to specify a previous in the architecture
-
-TODO Write a parser to convert a more abstract, yaml-like architecture definition into the intermediary structure that parser.js expects:
-Eventually, parser.js should be able to parse this directly, but for now, convert into the intermediary structure.
+TODO Write a parser to convert a more abstract, yaml-like architecture definition into the JSON that parser.js expects:
+Eventually, parser.js should be able to parse this directly, but for now, first convert into the JSON.
 
 Abstract structure template:
 ```

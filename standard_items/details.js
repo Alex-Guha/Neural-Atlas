@@ -1,12 +1,4 @@
 import * as DEFAULTS from '../utils/defaults.js';
-/*
-Details:
-    - Changes what's rendered
-    - Referenced by "details: detail_id" in an item
-    - Generally complex diagrams
-    - Can have settings and references
-    - Can be used either for a more detailed view of a component or (usually) a matrix-level explanation
-*/
 
 export const testSegmentedArrows = {
     content: {

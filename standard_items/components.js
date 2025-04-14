@@ -1,18 +1,6 @@
 import * as DEFAULTS from '../utils/defaults.js';
-/*
-Components:
-    - mid level, constructed from components and subcomponents
-    - written the same as details, but intended to be incorporated directly in rendering rather than changing the view
-        - First element can't have a previous (duh), and shouldn't have position or x/y (but can for certain things).
-        - Last element should to be positioned on the same y level as the first element, for component chaining.
-    - references and settings get combined into the parent's
-    - Can be anything from a single subcomponent (probably with a detail reference) to complex subdiagrams
-    - Components having components looks like: "placeholder_id: { component: 'ComponentName' }" in contents
-        - Generally, the next item shouldn't have a previous set, but it can if nothing depends on the component.
-        - placehold_id needs to be unique, but isn't used at all
 
-TODO Make a components folder in standard_items, and divide components by class into their own files. For example, MHA, MLA, etc. would go into attention.js.
-*/
+// TODO Make a components folder in standard_items, and divide components by class into their own files. For example, MHA, MLA, etc. would go into attention.js.
 
 export const testText = {
     settings: [{ label: 'Hide Text', id: 'hide-text', property: 'hideText' }],
