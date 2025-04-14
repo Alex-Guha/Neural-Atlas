@@ -21,6 +21,11 @@ export function parseArchitecture(architectureName) {
     globalState.viewStructure[architectureName] = [];
 
     Object.entries(architectures[architectureName]).forEach(([componentID, swapModules]) => {
+        // TODO Add a note to the documentation for architectures about how settings and references are handled
+        if (componentID === 'settings' || componentID === 'references') {
+            architectureDetails[componentID] = [...(architectureDetails[componentID] ?? []), ...(swapModules ?? [])];
+            return;
+        }
         buildComponent(componentID, architectureDetails, architectureName, undefined, swapModules);
     });
     return architectureDetails;

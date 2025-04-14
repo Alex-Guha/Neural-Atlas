@@ -86,6 +86,12 @@ The code has been rewritten and significantly expanded.
 #### Allow for non-sequential component combination in architectures
 - i.e. if multiple components want to branch off one.
 - Would require the ability to specify a previous in the architecture
+#### Architecture changing toggles
+- batch tensor
+- inference vs training
+- flash attention
+- LM size toggles (llama 2 - MHA for 7B and 13B, GQA for 34B and 70B, model dim changes, etc)
+- Raw implementation vs equivalent interpretation
 
 
 ### Write a README

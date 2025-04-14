@@ -93,7 +93,6 @@ The decision to separate components and details is simply for sanity's sake. Kee
 
 ### Notes:
 - Pointed to with "details: detail_id" in a component item
-- Can have settings and references
 
 ### Syntax:
 ```

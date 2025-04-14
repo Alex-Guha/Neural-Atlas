@@ -62,3 +62,35 @@ export const testswap = {
     },
     testEverything: null,
 }
+
+// TODO verify this - https://github.com/huggingface/transformers/blob/v4.46.0/src/transformers/models/llama/modeling_llama.py
+export const llama2_7B = {
+    references: [
+        {
+            title: "Llama 2 Transformers Code",
+            authors: [
+                "todo",
+                "todo",
+                "todo",
+                "todo",
+            ],
+            link: "https://github.com/huggingface/transformers/blob/v4.46.0/src/transformers/models/llama/modeling_llama.py",
+            info: "todo",
+            refType: "Github"
+        },
+    ],
+    input: {},
+    tokenization: {},
+    embeddings: {},
+    decoder: {},
+    /* llama 2's decoder is the default
+    decoder: {
+        normalization: ['layernorm', null],
+        attention: ['mha', { positional_encoding: 'rotary' }],
+        normalization: ['layernorm', null],
+        feedforward: ['swish', {}],
+    }*/
+    postAttentionNorm: {},
+    unembedding: {},
+    sampling: {},
+}
