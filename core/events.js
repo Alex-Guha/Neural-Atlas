@@ -173,7 +173,7 @@ function createDropdownSetting(setting, event) {
     return container;
 }
 
-// Draws teh default toggle switch for settings
+// Draws the default toggle switch for settings
 function createToggleSetting(setting, event) {
     const container = document.createElement('div');
     container.className = 'switch-container';
