@@ -84,8 +84,8 @@ export const llama2_7B = {
 
     // The keys here point to components (in components.js). The values optionally override the default component settings.
     input: {},
-    tokenization: {},
-    embedding: {},
+    tokenization_abstract: {},
+    embedding_abstract: {},
     /* llama 2's decoder is the default.
     The keys override elements within the component.
     The first list item is the component to swap in, the second is overrides for that swap in component.
@@ -95,8 +95,8 @@ export const llama2_7B = {
         postAttnNorm: ['rms', null],
         feedforward: ['swish', {}],
     }*/
-    decoder: {},
-    rms: {}, // final norm
-    unembedding: {},
+    decoder_abstract: {},
+    rms_abstract: {}, // final norm
+    unembedding_abstract: {},
     output: {},
 }

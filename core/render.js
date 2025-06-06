@@ -6,7 +6,7 @@ import { drawText } from '../drawingUtils/text.js';
 import { resetZoom } from '../utils/zoom.js';
 
 import * as DEFAULTS from '../utils/defaults.js';
-import { globalState } from '../utils/state.js'
+import { globalState } from '../utils/state.js';
 
 const content = d3.select("#content");
 

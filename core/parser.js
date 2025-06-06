@@ -1,6 +1,5 @@
 import { globalState } from '../utils/state.js'
 
-import * as details from '../standard_items/details.js';
 import * as components from '../standard_items/components.js';
 import * as architectures from '../standard_items/architectures.js';
 
@@ -11,7 +10,7 @@ As such, it also contains functions to parse details and components, since they 
 When rendering, the view needs to strictly consist of subcomponents with their graph-like organization defined.
 parseArchitecture handles converting the abstract architecture definitions, which consist of components,
     to this expected flat view structure by recursively unrolling the components and their content.
-Additionally, when parsing the architecture, we also build the views for any details that are referenced in the architecture.
+Additionally, when parsing the architecture, we also build the views for any details that are referenced in architecture components.
 
 TODO: Write a parser to convert a more abstract, yaml-like architecture definition into the JSON that parseArchitecture expects
 - This should be a separate function that passes the parsed architecture to parseArchitecture (will require some minor changes to parseArchitecture)
@@ -19,7 +18,7 @@ TODO: Write a parser to convert a more abstract, yaml-like architecture definiti
 - See the example in architectures.js for the desired format
 */
 
-// Parses architectures (abstract definitions of Details) and creates the corresponding view
+// Parses architectures and creates the corresponding view
 export function parseArchitecture(architectureName) {
 
     // The flat view structure
@@ -56,77 +55,22 @@ export function parseArchitecture(architectureName) {
     return architectureDetails;
 }
 
-// Parses Details and creates the corresponding view
-// Essentially a reduced version of buildComponent
-export function parseDetail(detailName, overrides = null) {
+// Parses details and creates the corresponding view
+// Essentially a wrapper on buildComponent
+export function parseDetail(detailName, parentComponentChain = [], overrides = null) {
     console.debug(`Building view ${detailName}`);
-
-    const targetDetail = details[detailName];
-    if (!targetDetail) {
-        console.error(`Detail ${detailName} not found.`);
-        return null;
-    }
 
     // The flat view structure
     const detail = {
-        settings: (targetDetail.settings ?? []),
-        references: (targetDetail.references ?? []),
+        settings: [],
+        references: [],
         content: {},
     }
 
     // Used to display the view nav menu in the sidebar
     globalState.viewStructure[detailName] = [];
 
-    // Because we change item id, we need to also change any future references to it
-    // So, we map the old id to the new id, and update the previous property if it exists
-    // Why do we change item id? So that subcomponents don't all have to have unique ids across the entire application.
-    const idMap = {};
-
-    // Stitch together content
-    // See details.js for what itemID and item look like
-    Object.entries(targetDetail.content).forEach(([itemID, item]) => {
-
-        // This if-block handles when the item is a component that needs to be unrolled
-        if (item.component) {
-            // overrides here is used to pass in any architecture-specific overrides for the component
-            //     This is specifically used for abstract_components
-            buildComponent(item.component, detail, detailName, undefined, overrides);
-            return;
-        }
-
-        // The below code handles the case where the item is a simple object, not a component
-
-        // Search for an unused id for the item
-        const newItemID = `${itemID}`;
-        let i = 1;
-        while (detail.content[newItemID]) {
-            newItemID = `${itemID}_${i}`;
-            i++;
-        }
-        idMap[itemID] = newItemID;
-
-        // Add the subcomponent to the view using the new id
-        // We use JSON.parse(JSON.stringify(item)) to create a deep copy of the item
-        // This is necessary to avoid mutating the original item in the detail definition,
-        //     which would otherwise happen both when we set the previous property below
-        //     and when we calculate positioning during rendering.
-        detail.content[newItemID] = JSON.parse(JSON.stringify(item));
-
-        // Update the item's previous property to use the new id, if there was a previous.
-        if (detail.content[newItemID].previous) detail.content[newItemID].previous = idMap[item.previous];
-
-        // Handle constructing details if specified and not already built
-        if (item.details && !globalState.views[item.details]) {
-
-            // Add the new view to the nav menu view tracker
-            globalState.viewStructure[detailName].push(item.details);
-
-            // Note that overrides are not passed here, unlike in buildComponent
-            // This may need to be changed in the future, but at the moment, the subcomponents in a detail are
-            //      intended to be inherent features of whatever the detail represents that don't change based on the architecture
-            globalState.views[item.details] = parseDetail(item.details);
-        }
-    });
+    buildComponent(detailName, detail, detailName, parentComponentChain, overrides);
 
     return detail;
 }
@@ -156,7 +100,7 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
     // Because we change item id, we need to also change any future references to it
     // So, we map the old id to the new id, and update the previous property if it exists
     // Why do we change item id? So that subcomponents don't all have to have unique ids across the entire application.
-    const idMap = {};
+    const idMap = {}; // XXX This might need to be passed in the buildComponent recursion chain
 
     // Stitch together content
     // See components.js for what itemID and item look like
@@ -177,19 +121,20 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
                 // check if the swappable modules has a swap for this component
                 const swapComponent = swapModules[componentClass];
                 if (swapComponent) {
+                    console.debug(`Swapping internal component ${itemID} with class ${componentClass} to ${swapComponent.at(0)}`);
                     buildComponent(
                         swapComponent.at(0), // 'componentName'
                         viewDetails,
                         viewName,
                         componentChain, // cycle tracker
-                        swapModules = swapComponent.at(1) // `{ className: ['componentName', null] }` or `null`
+                        swapComponent.at(1) // `{ className: ['componentName', null] }` or `null`
                     );
                     return;
                 }
             }
 
             // Architecture did not specify a swap or this component is not swappable, build normally
-            buildComponent(item.component, viewDetails, viewName, componentChain);
+            buildComponent(item.component, viewDetails, viewName, componentChain, swapModules);
             return;
         }
 
@@ -223,6 +168,16 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
         } else if (viewDetails.content[newItemID].previous)
             viewDetails.content[newItemID].previous = idMap[item.previous];
 
+        // We also need to check the arrows, since they can also have a previous property
+        if (Array.isArray(item.arrow) && item.arrow.length > 0) {
+            for (const arrow of viewDetails.content[newItemID].arrow)
+                if (arrow.previous) {
+                    arrow.previous = idMap[arrow.previous];
+                }
+        } else if (item.arrow && item.arrow.previous) {
+            viewDetails.content[newItemID].arrow.previous = idMap[item.arrow.previous];
+        }
+
         // Handle constructing details if specified and not already built
         if (item.details && !globalState.views[item.details]) {
 
@@ -231,7 +186,21 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
 
             // overrides here is used to pass in any architecture-specific overrides for the component
             //     This is specifically used for abstract_components
-            globalState.views[item.details] = parseDetail(item.details, swapModules);
+            globalState.views[item.details] = parseDetail(item.details, parentComponentChain, swapModules);
+        }
+
+        // Similar to the above item detail handling, we also check the arrows for details.
+        if (Array.isArray(item.arrow) && item.arrow.length > 0) {
+            for (const arrow of item.arrow)
+                if (arrow.details && !globalState.views[arrow.details]) {
+                    globalState.viewStructure[viewName].push(arrow.details);
+                    globalState.views[arrow.details] = parseDetail(arrow.details, parentComponentChain, swapModules);
+                }
+        } else if (item.arrow) {
+            if (item.arrow.details && !globalState.views[item.arrow.details]) {
+                globalState.viewStructure[viewName].push(item.arrow.details);
+                globalState.views[item.arrow.details] = parseDetail(item.arrow.details, parentComponentChain, swapModules);
+            }
         }
     });
 

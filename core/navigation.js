@@ -6,7 +6,7 @@ import { resetZoom } from '../utils/zoom.js';
 import { DEFAULT_VIEW } from '../utils/defaults.js';
 import { globalState } from '../utils/state.js'
 
-import * as details from '../standard_items/details.js';
+import * as components from '../standard_items/components.js';
 import * as architectures from '../standard_items/architectures.js';
 
 const navigation = d3.select("#navigation");
@@ -24,7 +24,7 @@ export const navigateTo = (view) => {
     if (!globalState.views[view]) {
         if (architectures[view])
             globalState.views[view] = parseArchitecture(view);
-        else if (details[view])
+        else if (components[view])
             globalState.views[view] = parseDetail(view);
         else {
             console.error(`View ${view} not found.`);

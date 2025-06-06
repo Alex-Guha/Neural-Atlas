@@ -74,25 +74,8 @@ These are not intended to be created directly by the average user, instead used 
 - Component nesting looks like: "placeholder_id: { component: 'ComponentName' }" in contents
     - Generally, the next item shouldn't have a previous set, but it can if nothing depends on the component.
     - placehold_id needs to be unique, but isn't used at all
-
-### Syntax:
-```
-```
-
-### Example:
-```
-```
-
-
-## Details
-Although identical to components in syntax, these differ by specifying a view directly instead of being integrated into other diagrams.
-
-As such, details are used to change the view (via double-clicking an item), usually for a complex matrix-level explanation, though they can also be used for a more detailed view of a component.
-
-The decision to separate components and details is simply for sanity's sake. Keeping track of which components should be used as views and which are strictly for integrating into other diagrams can quickly become a headache.
-
-### Notes:
-- Pointed to with "details: detail_id" in a component item
+- Components can also be detailed views of components, or more often for complex matrix-level explanations.
+    - This happens when a component item contains the property "details: component_id"
 
 ### Syntax:
 ```

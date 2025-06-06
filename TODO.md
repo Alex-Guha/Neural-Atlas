@@ -36,7 +36,6 @@
 - Allow for importing the following, so that users may define and share custom versions of each, especially for developing diagrams before adding them to the central repo
   - The architecture yaml-like
   - Individual components
-  - Individual details
 - Exporting should be handled in the editing section below
 - No point in exporting/importing the full rendered svg, info/references/details don't translate without the accompanying renderer
 - Save imported stuff to local storage and recombine with predefined stuff on load
@@ -55,7 +54,6 @@
     - There should also be a dropdown for adding an item after the selected element
     - Don't overcook too much for a first version. QoL like being able to change the previous by selecting an item in the diagram can come later.
   - There should be an export button, which downloads the custom component
-- No need to add a detail editing mode, users should not need to add new ones for now, and can write them out as js files and import them if they really want to.
 - Potentially add a way to export both the architecture and the list of components together, in case a user made a custom architecture containing custom components
 - Consider what the references box could be used for. Maybe that becomes the text entry field for the component editing mode, where a user can select "Edit info" and type in this.
 - For all of these, there should be auto saving to local storage
@@ -127,7 +125,7 @@ Add the ability to compare two architectures visually (highlighting the differen
 - This may not be possible for the first rendering, since the zoom is reset in drawContent before the svg is rendered, so content_height doesn't exist yet.
 
 #### Navigation
-- Save the architecture or details name (on changing views) in local storage and load it (via loadSettings) on page load
+- Save the view (on changing views) in local storage and load it (via loadSettings) on page load
 - Make the settings and views buttons mouseover behavior persist when the button has been clicked (i.e. when the settings or views menu is open), and reset when the resetSidebar event is called
 
 #### Arrows

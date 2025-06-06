@@ -2,8 +2,11 @@ import * as DEFAULTS from '../utils/defaults.js';
 
 /*
 Rules:
-- Each component must have a unique ID.
+- Each component must have a unique ID across both components and architectures.
 - The output y-level should be the same as the input y-level.
+- Component IDs cannot end with underscore + number (e.g., _1, _2, etc.) as these have special meaning in the parser.
+- Naming Conventions:
+    - Components that are simpler versions of other components and point to those more complex components should have the same name as the complex component, but with a suffix of _abstract.
 */
 
 // TODO Make a components folder in standard_items, and divide components by class into their own files. For example, MHA, MLA, etc. would go into attention.js.
@@ -218,6 +221,183 @@ export const testSwappable = {
     }
 }
 
+export const testSegmentedArrows = {
+    content: {
+        centerBox: {
+            x: 700, y: 150, // implicit + default 50, 100
+            width: DEFAULTS.SHAPE.width * 2,
+            shape: 'box',
+            text: {
+                latexText: 'box_{center}',
+                position: 'center',
+            },
+        },
+        leftBox: {
+            position: 'left',
+            shape: 'box',
+            previous: 'centerBox',
+            count: 3, ySpacing: DEFAULTS.SHAPE.width / 8,
+            arrow: {}
+        },
+        aboveBox: {
+            position: 'above',
+            width: DEFAULTS.SHAPE.width * 2, height: DEFAULTS.SHAPE.height / 2,
+            shape: 'box',
+            previous: 'centerBox',
+            count: 3, xSpacing: -DEFAULTS.SHAPE.width / 4, ySpacing: DEFAULTS.SHAPE.width / 8,
+            arrow: [
+                {},
+                {
+                    segments: [
+                        { direction: 'up' },
+                        { direction: 'right' },
+                    ],
+                    previous: 'leftBox',
+                },
+                {
+                    segments: [
+                        { direction: 'left', extraLength: DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'up', extraLength: DEFAULTS.SHAPE.separation * 2 + DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'right' },
+                        { direction: 'down' },
+                    ],
+                    previous: 'leftBox',
+                },
+                {
+                    segments: [
+                        { direction: 'right', extraLength: DEFAULTS.SHAPE.width / 4, yOffset: -DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'up' },
+                        { direction: 'right' },
+                        { direction: 'up', extraLength: DEFAULTS.SHAPE.width / 4, xOffset: -DEFAULTS.SHAPE.width / 4 },
+                    ],
+                    previous: 'leftBox',
+                }
+            ]
+        },
+        rightBox: {
+            shape: 'box',
+            previous: 'centerBox',
+            count: 3, xSpacing: -DEFAULTS.SHAPE.width / 4,
+            arrow: [
+                {},
+                {
+                    segments: [
+                        { direction: 'right' },
+                        { direction: 'down' },
+                    ],
+                    previous: 'aboveBox',
+                },
+                {
+                    segments: [
+                        { direction: 'down', extraLength: DEFAULTS.SHAPE.width / 4, xOffset: DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'right' },
+                        { direction: 'down' },
+                        { direction: 'right', extraLength: DEFAULTS.SHAPE.width / 4, yOffset: -DEFAULTS.SHAPE.width / 4 },
+                    ],
+                    previous: 'aboveBox',
+                },
+                {
+                    segments: [
+                        { direction: 'up', extraLength: DEFAULTS.SHAPE.width / 4, xOffset: DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'right', extraLength: DEFAULTS.SHAPE.separation * 2 },
+                        { direction: 'down' },
+                        { direction: 'left', yOffset: -DEFAULTS.SHAPE.width / 4 },
+                    ],
+                    previous: 'aboveBox',
+                }
+            ]
+        },
+        belowBox: {
+            position: 'below',
+            width: DEFAULTS.SHAPE.width * 2, height: DEFAULTS.SHAPE.height / 2,
+            shape: 'box',
+            previous: 'centerBox',
+            count: 3,
+            arrow: [
+                {},
+                {
+                    segments: [
+                        { direction: 'down' },
+                        { direction: 'left' },
+                    ],
+                    previous: 'rightBox',
+                },
+                {
+                    segments: [
+                        { direction: 'right', extraLength: DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'down', extraLength: DEFAULTS.SHAPE.separation * 2 + DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'left' },
+                        { direction: 'up' },
+                    ],
+                    previous: 'rightBox',
+                },
+                {
+                    segments: [
+                        { direction: 'left', extraLength: DEFAULTS.SHAPE.width / 4, yOffset: DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'down' },
+                        { direction: 'left' },
+                        { direction: 'down', extraLength: DEFAULTS.SHAPE.width / 4, xOffset: DEFAULTS.SHAPE.width / 4 },
+                    ],
+                    previous: 'rightBox',
+                }
+            ]
+        },
+
+        centerBox2: {
+            x: 750, y: 800, // implicit + default 50, 100
+            width: DEFAULTS.SHAPE.width * 2,
+            shape: 'box',
+            text: {
+                latexText: 'box_{center}',
+                position: 'center',
+            },
+        },
+        belowBox2: {
+            position: 'below',
+            width: DEFAULTS.SHAPE.width * 2, height: DEFAULTS.SHAPE.height / 2,
+            shape: 'box',
+            previous: 'centerBox2',
+            count: 3,
+            arrow: {}
+        },
+        leftBox2: {
+            position: 'left',
+            shape: 'box',
+            previous: 'centerBox2',
+            count: 3, ySpacing: DEFAULTS.SHAPE.width / 8,
+            arrow: [
+                {},
+                {
+                    segments: [
+                        { direction: 'left' },
+                        { direction: 'up' },
+                    ],
+                    previous: 'belowBox2',
+                },
+                {
+                    segments: [
+                        { direction: 'up', extraLength: DEFAULTS.SHAPE.width / 4, xOffset: -DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'left' },
+                        { direction: 'up' },
+                        { direction: 'left', extraLength: DEFAULTS.SHAPE.width / 4, yOffset: DEFAULTS.SHAPE.width / 4 },
+                    ],
+                    previous: 'belowBox2',
+                },
+                {
+                    segments: [
+                        { direction: 'down', extraLength: DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'left', extraLength: DEFAULTS.SHAPE.separation * 2 + DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'up' },
+                        { direction: 'right' },
+                    ],
+                    previous: 'belowBox2',
+                }
+            ]
+        },
+    }
+}
+
+
 // TODO Everything below this.
 
 export const input = {
@@ -230,8 +410,7 @@ export const input = {
     }
 }
 
-// TODO Add a bit more content to this, to make the default view more interesting.
-export const tokenization = {
+export const tokenization_abstract = {
     content: {
         box: {
             shape: 'box',
@@ -246,8 +425,7 @@ export const tokenization = {
     }
 }
 
-// TODO Add a bit more content to this, to make the default view more interesting.
-export const embedding = {
+export const embedding_abstract = {
     content: {
         box: {
             shape: 'box',
@@ -263,8 +441,7 @@ export const embedding = {
     }
 }
 
-// TODO Add a bit more content to this, to make the default view more interesting.
-export const unembedding = {
+export const unembedding_abstract = {
     content: {
         box: {
             shape: 'box',
@@ -296,7 +473,7 @@ export const output = {
 }
 
 // TODO Visualize that there are multiple subsequent decoder layers, and that they are all the same.
-export const decoder = {
+export const decoder_abstract = {
     content: {
         box: {
             shape: 'box',
@@ -311,13 +488,27 @@ export const decoder = {
     }
 }
 
-export const rms = {
+export const rms_abstract = {
     content: {
         box: {
             shape: 'box',
             info: "TODO",
             text: { text: 'rms' },
             details: 'rms',
+            arrow: {
+                text: { text: 'TODO' },
+                info: 'TODO'
+            }
+        }
+    }
+}
+
+export const swish_abstract = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'swish' },
             arrow: {
                 text: { text: 'TODO' },
                 info: 'TODO'
@@ -340,16 +531,49 @@ export const mha = {
     }
 }
 
+export const tokenization = {
+    content: {}
+}
+
+export const embedding = {
+    content: {}
+}
+
+export const unembedding = {
+    content: {}
+}
+
+export const sampling = {
+    content: {}
+}
+
+export const rms = {
+    content: {}
+}
+
 export const swish = {
+    content: {}
+}
+
+// TODO Add residuals
+export const decoder = {
     content: {
-        box: {
-            shape: 'box',
-            info: "TODO",
-            text: { text: 'swish' },
+        hidden_box: {
+            shape: 'box', width: 0
+        },
+        residual_split: {
+            shape: 'box', previous: 'hidden_box',
+            width: DEFAULTS.SHAPE.width / 2,
+            height: DEFAULTS.SHAPE.height / 4,
+            separation: DEFAULTS.SHAPE.separation,
             arrow: {
-                text: { text: 'TODO' },
+                text: { text: 'latents' },
                 info: 'TODO'
             }
-        }
+        },
+        norm_1: { component: 'rms_abstract', class: 'preAttnNorm' },
+        attn: { component: 'mha', class: 'selfAttention' },
+        norm_2: { component: 'rms_abstract', class: 'postAttnNorm' },
+        mlp: { component: 'swish_abstract', class: 'feedforward' },
     }
 }
