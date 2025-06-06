@@ -1,5 +1,10 @@
 import * as DEFAULTS from '../utils/defaults.js';
 
+/*
+Rules:
+- Each view must have a unique ID across both details.js and architectures.js (but can be the same as a component ID).
+*/
+
 export const testSegmentedArrows = {
     content: {
         centerBox: {
@@ -173,5 +178,48 @@ export const testSegmentedArrows = {
                 }
             ]
         },
+    }
+}
+
+export const tokenization = {
+    content: {}
+}
+
+export const embedding = {
+    content: {}
+}
+
+export const unembedding = {
+    content: {}
+}
+
+export const sampling = {
+    content: {}
+}
+
+export const rms = {
+    content: {}
+}
+
+// TODO Add residuals
+export const decoder = {
+    content: {
+        hidden_box: {
+            shape: 'box', width: 0
+        },
+        residual_split: {
+            shape: 'box', previous: 'hidden_box',
+            width: DEFAULTS.SHAPE.width / 2,
+            height: DEFAULTS.SHAPE.height / 4,
+            separation: DEFAULTS.SHAPE.separation,
+            arrow: {
+                text: { text: 'latents' },
+                info: 'TODO'
+            }
+        },
+        norm_1: { component: 'rms', class: 'preAttnNorm' },
+        attn: { component: 'mha', class: 'selfAttention' },
+        norm_2: { component: 'rms', class: 'postAttnNorm' },
+        mlp: { component: 'swish', class: 'feedforward' },
     }
 }

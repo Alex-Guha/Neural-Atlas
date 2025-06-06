@@ -1,4 +1,4 @@
-export const DEFAULT_VIEW = 'test';
+export const DEFAULT_VIEW = 'llama2_7B'; //test
 
 export const THEME = {
     BACKGROUND: '#1a1a1a',

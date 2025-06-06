@@ -1,5 +1,11 @@
 import * as DEFAULTS from '../utils/defaults.js';
 
+/*
+Rules:
+- Each component must have a unique ID.
+- The output y-level should be the same as the input y-level.
+*/
+
 // TODO Make a components folder in standard_items, and divide components by class into their own files. For example, MHA, MLA, etc. would go into attention.js.
 
 export const testText = {
@@ -209,5 +215,141 @@ export const testSwappable = {
                 position: 'center',
             },
         },
+    }
+}
+
+// TODO Everything below this.
+
+export const input = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'input' },
+        }
+    }
+}
+
+// TODO Add a bit more content to this, to make the default view more interesting.
+export const tokenization = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'tokenization' },
+            details: 'tokenization',
+            arrow: {
+                text: { text: 'Input Text' },
+                info: 'Sample user input'
+            }
+        }
+    }
+}
+
+// TODO Add a bit more content to this, to make the default view more interesting.
+export const embedding = {
+    content: {
+        box: {
+            shape: 'box',
+            width: DEFAULTS.SHAPE.width * 2,
+            info: "TODO",
+            text: { text: 'embedding', position: 'center' },
+            details: 'embedding',
+            arrow: {
+                text: { text: 'Tokenized Text' },
+                info: 'Ideally, same info as tokenization box'
+            }
+        }
+    }
+}
+
+// TODO Add a bit more content to this, to make the default view more interesting.
+export const unembedding = {
+    content: {
+        box: {
+            shape: 'box',
+            width: DEFAULTS.SHAPE.width * 2,
+            info: "TODO",
+            text: { text: 'unembedding', position: 'center' },
+            details: 'unembedding',
+            arrow: {
+                text: { text: 'TODO' },
+                info: 'TODO'
+            }
+        }
+    }
+}
+
+export const output = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'output' },
+            arrow: {
+                text: { text: 'sampling' },
+                info: 'TODO',
+                details: 'sampling',
+            }
+        }
+    }
+}
+
+// TODO Visualize that there are multiple subsequent decoder layers, and that they are all the same.
+export const decoder = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'decoder' },
+            details: 'decoder',
+            arrow: {
+                text: { text: 'latents' },
+                info: 'TODO'
+            }
+        }
+    }
+}
+
+export const rms = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'rms' },
+            details: 'rms',
+            arrow: {
+                text: { text: 'TODO' },
+                info: 'TODO'
+            }
+        }
+    }
+}
+
+export const mha = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'mha' },
+            arrow: {
+                text: { text: 'TODO' },
+                info: 'TODO'
+            }
+        }
+    }
+}
+
+export const swish = {
+    content: {
+        box: {
+            shape: 'box',
+            info: "TODO",
+            text: { text: 'swish' },
+            arrow: {
+                text: { text: 'TODO' },
+                info: 'TODO'
+            }
+        }
     }
 }

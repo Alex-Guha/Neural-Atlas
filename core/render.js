@@ -75,18 +75,18 @@ function renderElements(renderId) {
                 switch (item.position) {
                     case 'above':
                         currentAbsolutePosition.x += (item.x ?? 0);
-                        currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? - item.height - (item.separation ?? DEFAULTS.SHAPE.separation) : 0));
+                        currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? - item.height - (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
                         break;
                     case 'below':
                         currentAbsolutePosition.x += (item.x ?? 0);
-                        currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height + (item.separation ?? DEFAULTS.SHAPE.separation) : 0));
+                        currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height + (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
                         break;
                     case 'left':
-                        currentAbsolutePosition.x += (item.x ?? (previousAbsolutePosition.width ? - item.width - (item.separation ?? DEFAULTS.SHAPE.separation) : 0));
+                        currentAbsolutePosition.x += (item.x ?? (previousAbsolutePosition.width ? - item.width - (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
                         currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height / 2 - item.height / 2 : 0));
                         break;
                     default: // Default to right positioning
-                        currentAbsolutePosition.x += (item.x ?? (previousAbsolutePosition.width ? previousAbsolutePosition.width + (item.separation ?? DEFAULTS.SHAPE.separation) : 0));
+                        currentAbsolutePosition.x += (item.x ?? (previousAbsolutePosition.width ? previousAbsolutePosition.width + (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
                         // For right positioning, calculate y using centers of previous and item.
                         currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height / 2 - item.height / 2 : 0));
                         break;
@@ -98,7 +98,7 @@ function renderElements(renderId) {
                 item.calculated = true;
             }
 
-            // Draw the shape. All items normally have a shape, but it's not enforced, incase a user wants to be creative
+            // Draw the shape. All items normally have a shape, but it's not enforced, in case a user wants to be creative
             if (item.shape) drawSubcomponent(item);
 
             // Draw the arrow(s). Unlike text, this is iterated over here because the arrows may have a different previous item specified than item does.

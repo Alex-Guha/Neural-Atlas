@@ -82,6 +82,8 @@ The code has been rewritten and significantly expanded.
 ### QoL
 #### Make double-clickable items more noticeable, and add a notice at the top or bottom of the info box to tell the user the item is clickable
 #### Improve the UI for buildViewTree (events.js), offload css to styles.css
+- Should have the current architecture and it's view tree at the top, and then the other available architectures below (without expandable view trees since they haven't been generated yet)
+- This will be the primary ways of navigating between architectures
 #### Add a link to the github repo
 #### Allow for non-sequential component combination in architectures
 - i.e. if multiple components want to branch off one.
@@ -113,6 +115,11 @@ Add the ability to compare two architectures visually (highlighting the differen
 
 
 ### Additional QoL
+#### Instructions
+- Add an overlay on webpage first load with indicators for every clickable element telling users how to interact with the app
+  - This should vanish when the user clicks anything
+  - There can be an info button in a corner to reopen the overlay
+
 #### Zoom
 - Currently, zoom.js gives the svg content an offset of (100, 150).
 - Instead, use this to center the content vertically.

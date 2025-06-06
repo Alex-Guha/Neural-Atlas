@@ -10,6 +10,7 @@ const content = d3.select("#content");
  * If the arrow has segments, it draws each segment in the order they are defined, inferring positions and lengths based on the directions provided for each segment.
 */
 export function drawConnection(arrow, previousItem, item) {
+    if (!previousItem) return;
 
     for (const setting of globalState.currentView.settings ?? []) {
         if (arrow[setting.property] && globalState.currentSettings[setting.id]) return;
