@@ -1,21 +1,15 @@
 import { globalState } from '../utils/state.js'
 
 import * as components from '../standard_items/components.js';
-import * as architectures from '../standard_items/architectures.js';
 
-/*
-This file contains functions to parse json definitions of architectures as seen in architectures.js.
+/**
+This file contains functions to parse json definitions of architectures provided by parseArchitecture.js.
 As such, it also contains functions to parse details and components, since they are used in architectures.
 
 When rendering, the view needs to strictly consist of subcomponents with their graph-like organization defined.
 parseArchitecture handles converting the abstract architecture definitions, which consist of components,
     to this expected flat view structure by recursively unrolling the components and their content.
 Additionally, when parsing the architecture, we also build the views for any details that are referenced in architecture components.
-
-TODO: Write a parser to convert a more abstract, yaml-like architecture definition into the JSON that parseArchitecture expects
-- This should be a separate function that passes the parsed architecture to parseArchitecture (will require some minor changes to parseArchitecture)
-- Eventually, that new function and parseArchitecture can just be merged into one function that parses the yaml-like architecture definition directly
-- See the example in architectures.js for the desired format
 */
 
 // Parses architectures and creates the corresponding view
@@ -25,10 +19,11 @@ export function parseArchitecture(architectureName) {
     const architectureDetails = {
         settings: [],
         references: [],
+        properties: {},
         content: {},
     }
 
-    if (!architectures[architectureName]) {
+    if (!globalState.architectures[architectureName]) {
         console.error(`Architecture ${architectureName} not found.`);
         return architectureDetails;
     }
@@ -40,12 +35,15 @@ export function parseArchitecture(architectureName) {
 
     // Stitch together content
     // See architectures.js for what componentID and swapModules look like
-    Object.entries(architectures[architectureName]).forEach(([componentID, swapModules]) => {
-        // TODO Add a note to the readme about how settings and references are handled
+    Object.entries(globalState.architectures[architectureName]).forEach(([componentID, swapModules]) => {
         // If the component is 'settings' or 'references', we handle it differently
         if (componentID === 'settings' || componentID === 'references') {
             // In this case, swapModules is actually the settings or references array
             architectureDetails[componentID] = [...(architectureDetails[componentID] ?? []), ...(swapModules ?? [])];
+            return;
+        } else if (componentID === 'properties') {
+            architectureDetails.properties = (swapModules ?? {});
+            globalState.currentProperties = architectureDetails.properties;
             return;
         }
 
@@ -96,6 +94,17 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
         return;
     }
     const componentChain = [...parentComponentChain, componentID];
+
+    // Handle component-level detail specification
+    if (targetComponent.details && !globalState.views[targetComponent.details]) {
+
+        // Add the new view to the nav menu view tracker
+        globalState.viewStructure[viewName].push(targetComponent.details);
+
+        // overrides here is used to pass in any architecture-specific overrides for the component
+        //     This is specifically used for abstract_components
+        globalState.views[targetComponent.details] = parseDetail(targetComponent.details, parentComponentChain, swapModules);
+    }
 
     // Because we change item id, we need to also change any future references to it
     // So, we map the old id to the new id, and update the previous property if it exists
@@ -165,8 +174,9 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
             viewDetails.content[newItemID].previous = Object.keys(viewDetails.content).at(-2);
 
             // Otherwise, update the item's previous property to use the new id, if there was a previous.
-        } else if (viewDetails.content[newItemID].previous)
+        } else if (viewDetails.content[newItemID].previous) {
             viewDetails.content[newItemID].previous = idMap[item.previous];
+        }
 
         // We also need to check the arrows, since they can also have a previous property
         if (Array.isArray(item.arrow) && item.arrow.length > 0) {
@@ -177,6 +187,14 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
         } else if (item.arrow && item.arrow.previous) {
             viewDetails.content[newItemID].arrow.previous = idMap[item.arrow.previous];
         }
+
+        // Allow subcomponents to inherit the component's details, if specified
+        if (targetComponent.details && !item.details)
+            viewDetails.content[newItemID].details = targetComponent.details;
+
+        // Same for info
+        if (targetComponent.info && !item.info)
+            viewDetails.content[newItemID].info = targetComponent.info;
 
         // Handle constructing details if specified and not already built
         if (item.details && !globalState.views[item.details]) {

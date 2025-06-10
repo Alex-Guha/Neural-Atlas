@@ -1,4 +1,4 @@
-export const DEFAULT_VIEW = 'llama2_7B'; //test
+export const DEFAULT_VIEW = 'llama2_7B_abstract'; //test
 
 export const THEME = {
     BACKGROUND: '#1a1a1a',
@@ -38,7 +38,7 @@ export const THEME = {
 export const SHAPE = {
     width: 100,
     height: 200,
-    separation: 200
+    separation: 150
 };
 
 export const ARROW = {

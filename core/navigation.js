@@ -2,18 +2,11 @@ import { drawContent } from './render.js';
 import { createSettings, showViews } from './events.js';
 import { parseArchitecture, parseDetail } from './parser.js';
 import { resetZoom } from '../utils/zoom.js';
-
-import { DEFAULT_VIEW } from '../utils/defaults.js';
 import { globalState } from '../utils/state.js'
 
 import * as components from '../standard_items/components.js';
-import * as architectures from '../standard_items/architectures.js';
 
 const navigation = d3.select("#navigation");
-
-// These don't want to be moved to state.js for whatever reason
-globalState.views[DEFAULT_VIEW] = parseArchitecture(DEFAULT_VIEW);
-globalState.currentView = globalState.views[DEFAULT_VIEW];
 
 // Local State Variables
 let undoHistory = [];
@@ -22,7 +15,7 @@ let redoHistory = [];
 // Handles changing views
 export const navigateTo = (view) => {
     if (!globalState.views[view]) {
-        if (architectures[view])
+        if (globalState.architectures[view])
             globalState.views[view] = parseArchitecture(view);
         else if (components[view])
             globalState.views[view] = parseDetail(view);
@@ -30,6 +23,8 @@ export const navigateTo = (view) => {
             console.error(`View ${view} not found.`);
             return;
         }
+    } else if (globalState.architectures[view]) {
+        globalState.currentProperties = globalState.views[view].properties;
     }
     undoHistory.push(globalState.currentView);
     redoHistory = [];

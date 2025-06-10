@@ -75,18 +75,18 @@ function renderElements(renderId) {
                 switch (item.position) {
                     case 'above':
                         currentAbsolutePosition.x += (item.x ?? 0);
-                        currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? - item.height - (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
+                        currentAbsolutePosition.y += (item.y ?? (-(item.separation ?? DEFAULTS.SHAPE.separation) + (previousAbsolutePosition.height ? - item.height : 0)));
                         break;
                     case 'below':
                         currentAbsolutePosition.x += (item.x ?? 0);
-                        currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height + (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
+                        currentAbsolutePosition.y += (item.y ?? ((item.separation ?? DEFAULTS.SHAPE.separation) + (previousAbsolutePosition.height ?? 0)));
                         break;
                     case 'left':
-                        currentAbsolutePosition.x += (item.x ?? (previousAbsolutePosition.width ? - item.width - (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
+                        currentAbsolutePosition.x += (item.x ?? (-(item.separation ?? DEFAULTS.SHAPE.separation) + (previousAbsolutePosition.width ? - item.width : 0)));
                         currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height / 2 - item.height / 2 : 0));
                         break;
                     default: // Default to right positioning
-                        currentAbsolutePosition.x += (item.x ?? (previousAbsolutePosition.width ? previousAbsolutePosition.width + (item.separation ?? DEFAULTS.SHAPE.separation) : (item.separation ?? 0)));
+                        currentAbsolutePosition.x += (item.x ?? ((item.separation ?? DEFAULTS.SHAPE.separation) + (previousAbsolutePosition.width ?? 0)));
                         // For right positioning, calculate y using centers of previous and item.
                         currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height / 2 - item.height / 2 : 0));
                         break;

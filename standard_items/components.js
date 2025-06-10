@@ -450,8 +450,8 @@ export const unembedding_abstract = {
             text: { text: 'unembedding', position: 'center' },
             details: 'unembedding',
             arrow: {
-                text: { text: 'TODO' },
-                info: 'TODO'
+                text: { text: 'Final Norm' },
+                info: 'TODO', details: 'rms'
             }
         }
     }
@@ -464,7 +464,7 @@ export const output = {
             info: "TODO",
             text: { text: 'output' },
             arrow: {
-                text: { text: 'sampling' },
+                text: { text: 'Sampling' },
                 info: 'TODO',
                 details: 'sampling',
             }
@@ -472,19 +472,98 @@ export const output = {
     }
 }
 
-// TODO Visualize that there are multiple subsequent decoder layers, and that they are all the same.
 export const decoder_abstract = {
+    details: 'decoder',
+    info: "TODO",
     content: {
-        box: {
+        decoder_box: {
             shape: 'box',
-            info: "TODO",
-            text: { text: 'decoder' },
-            details: 'decoder',
+            width: DEFAULTS.SHAPE.width * 3,
+            text: { text: 'Decoder' },
             arrow: {
-                text: { text: 'latents' },
-                info: 'TODO'
+                text: { text: 'Latents' },
+                info: 'TODO',
+            },
+        },
+        attn_box: {
+            shape: 'box', previous: 'decoder_box',
+            opacity: 1,
+            width: DEFAULTS.SHAPE.width * 1.5,
+            height: DEFAULTS.SHAPE.height * 0.75,
+            x: DEFAULTS.SHAPE.width / 4,
+            text: { text: 'Self-Attention', position: 'center' },
+        },
+        mlp_box: {
+            shape: 'box', previous: 'attn_box',
+            opacity: 1, width: DEFAULTS.SHAPE.width * 0.75,
+            height: DEFAULTS.SHAPE.height * 0.75,
+            separation: DEFAULTS.SHAPE.width / 4,
+            text: { text: 'MLP', position: 'center' },
+        },
+
+        intermediate_box: {
+            shape: 'box',
+            width: DEFAULTS.SHAPE.width * 0.5,
+            height: DEFAULTS.SHAPE.width * 0.5,
+            previous: 'decoder_box',
+            text: { latexText: '...', position: 'center' },
+            arrow: {
+                text: { text: 'Latents' },
+                info: 'TODO',
+            },
+        },
+
+        decoder_box_2: {
+            shape: 'box', previous: 'intermediate_box',
+            width: DEFAULTS.SHAPE.width * 3,
+            text: { text: 'Decoder' },
+            arrow: {
+                text: { text: 'Latents' },
+                info: 'TODO',
+            },
+        },
+        attn_box_2: {
+            shape: 'box', previous: 'decoder_box_2',
+            opacity: 1,
+            width: DEFAULTS.SHAPE.width * 1.5,
+            height: DEFAULTS.SHAPE.height * 0.75,
+            x: DEFAULTS.SHAPE.width / 4,
+            text: { text: 'Self-Attention', position: 'center' },
+        },
+        mlp_box_2: {
+            shape: 'box', previous: 'attn_box_2',
+            opacity: 1, width: DEFAULTS.SHAPE.width * 0.75,
+            height: DEFAULTS.SHAPE.height * 0.75,
+            separation: DEFAULTS.SHAPE.width / 4,
+            text: { text: 'MLP', position: 'center' },
+        },
+        hidden_box: {
+            shape: 'box', width: 0,
+            previous: 'mlp_box_2',
+            separation: DEFAULTS.SHAPE.width / 4,
+
+            // A bit of a hack to create the bracket shape using arrow segments.
+            arrow: {
+                previous: 'decoder_box',
+                segments: [
+                    {
+                        direction: 'up',
+                        extraLength: DEFAULTS.SHAPE.height / 8,
+                        xOffset: -DEFAULTS.SHAPE.width * 1.5,
+                        yOffset: -DEFAULTS.SHAPE.height / 4
+                    },
+                    {
+                        direction: 'right',
+                        text: { text: '{{numDecoderBlocks}} blocks total', numDecoderBlocks: true, default: 'N' } // XXX property example
+                    },
+                    {
+                        direction: 'down',
+                        yOffset: -DEFAULTS.SHAPE.height / 4,
+                        noHead: true,
+                    },
+                ],
             }
-        }
+        },
     }
 }
 

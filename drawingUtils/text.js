@@ -14,8 +14,31 @@ export function drawText(item) {
 
     item.text.forEach(textObject => {
 
+        // Don't render the text if it's been toggled off
         for (const setting of globalState.currentView.settings ?? []) {
             if (textObject[setting.property] && globalState.currentSettings[setting.id]) return;
+        }
+
+        // Using architecture specific properties, replace any {{property}} placeholders in the text with the corresponding property.
+        let foundProps = false;
+        Object.entries(globalState.currentProperties).forEach(([prop, value]) => {
+            if (textObject[prop]) {
+                if (textObject.latexText)
+                    textObject.latexText = textObject.latexText.replaceAll(`{{${prop}}}`, value);
+                else
+                    textObject.text = textObject.text.replaceAll(`{{${prop}}}`, value);
+                foundProps = true;
+                return;
+            }
+        });
+        // If no properties were found and there's a default value, replace any remaining template patterns
+        if (!foundProps && textObject.default !== undefined) {
+            // Find and replace any remaining {{...}} placeholders with the default value
+            const templateRegex = /\{\{([^}]+)\}\}/g;
+            if (textObject.latexText)
+                textObject.latexText = textObject.latexText.replace(templateRegex, textObject.default);
+            else
+                textObject.text = textObject.text.replace(templateRegex, textObject.default);
         }
 
         // Handle latex differently than normal text

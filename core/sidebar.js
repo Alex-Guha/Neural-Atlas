@@ -31,6 +31,7 @@ export function updateReferences(elementReferences = null) {
     }
 }
 
+// TODO handle architecture properties affecting text
 // Creates the info box
 export function updateInfo(content) {
     const element = document.getElementById('info');
