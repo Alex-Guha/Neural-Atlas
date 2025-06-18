@@ -31,11 +31,14 @@ export function updateReferences(elementReferences = null) {
     }
 }
 
-// TODO handle architecture properties affecting text
 // Creates the info box
 export function updateInfo(content) {
     const element = document.getElementById('info');
     element.textContent = "";
+
+    // Replace placeholders with architecture property values
+    content = replacePlaceholders(content, globalState.currentProperties || {});
+
     let currentIndex = 0;
 
     while (currentIndex < content.length) {
@@ -47,6 +50,14 @@ export function updateInfo(content) {
             currentIndex = handlePlainText(content, currentIndex, element);
         }
     }
+}
+
+// Helper function to replace {{property}} placeholders with values from architecture properties
+function replacePlaceholders(text, properties) {
+    const templateRegex = /\{\{([^}|]+)(\|([^}]+))?\}\}/g;
+    return text.replace(templateRegex, (_, propName, _defaultPart, defaultValue) => {
+        return properties.hasOwnProperty(propName) ? properties[propName] : (defaultValue ?? '');
+    });
 }
 
 function handleLaTeXContent(content, currentIndex, element) {

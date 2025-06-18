@@ -20,25 +20,17 @@ export function drawText(item) {
         }
 
         // Using architecture specific properties, replace any {{property}} placeholders in the text with the corresponding property.
-        let foundProps = false;
-        Object.entries(globalState.currentProperties).forEach(([prop, value]) => {
-            if (textObject[prop]) {
-                if (textObject.latexText)
-                    textObject.latexText = textObject.latexText.replaceAll(`{{${prop}}}`, value);
-                else
-                    textObject.text = textObject.text.replaceAll(`{{${prop}}}`, value);
-                foundProps = true;
-                return;
-            }
-        });
-        // If no properties were found and there's a default value, replace any remaining template patterns
-        if (!foundProps && textObject.default !== undefined) {
-            // Find and replace any remaining {{...}} placeholders with the default value
-            const templateRegex = /\{\{([^}]+)\}\}/g;
-            if (textObject.latexText)
-                textObject.latexText = textObject.latexText.replace(templateRegex, textObject.default);
-            else
-                textObject.text = textObject.text.replace(templateRegex, textObject.default);
+        const templateRegex = /\{\{([^}|]+)(\|([^}]+))?\}\}/g;
+        function replacePlaceholders(text, properties) {
+            return text.replace(templateRegex, (_, propName, _defaultPart, defaultValue) => {
+                return properties.hasOwnProperty(propName) ? properties[propName] : (defaultValue ?? '');
+            });
+        }
+        const properties = globalState.currentProperties;
+        if (textObject.latexText) {
+            textObject.latexText = replacePlaceholders(textObject.latexText, properties);
+        } else if (textObject.text) {
+            textObject.text = replacePlaceholders(textObject.text, properties);
         }
 
         // Handle latex differently than normal text

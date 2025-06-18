@@ -3,7 +3,7 @@ import { drawContent } from './core/render.js';
 
 import { DEFAULT_VIEW } from './utils/defaults.js';
 import { globalState } from './utils/state.js'
-import { parseArchitectureFile } from './core/parseArchitecture.js';
+import { parseArchitectureFile } from './core/parseArchitectureFile.js';
 import { parseArchitecture } from './core/parser.js';
 
 function initializeApp(architectures = {}) {

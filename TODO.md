@@ -69,7 +69,7 @@
 #### Add attribution to README
 ```
 This project was inspired by [LLM Visualizer](https://github.com/learn-good/llm_viz/tree/main), created by [Arno Khachatourian].  
-The code has been rewritten and significantly expanded.
+The original code has been completely rewritten and significantly expanded.
 ```
 
 #### Think about citation capability

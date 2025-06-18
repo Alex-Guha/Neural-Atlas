@@ -474,7 +474,7 @@ export const output = {
 
 export const decoder_abstract = {
     details: 'decoder',
-    info: "TODO",
+    info: "TODO\n\nThere are {{numDecoderBlocks|N}} decoder blocks in this architecture.", // XXX property example {{property|default}}
     content: {
         decoder_box: {
             shape: 'box',
@@ -554,7 +554,7 @@ export const decoder_abstract = {
                     },
                     {
                         direction: 'right',
-                        text: { text: '{{numDecoderBlocks}} blocks total', numDecoderBlocks: true, default: 'N' } // XXX property example
+                        text: { text: '{{numDecoderBlocks|N}} blocks total' } // XXX property example {{property|default}}
                     },
                     {
                         direction: 'down',
