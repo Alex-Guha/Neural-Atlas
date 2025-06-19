@@ -18,9 +18,14 @@ export const drawContent = () => {
     currentRenderId++;
     const renderId = currentRenderId;
 
+    // TODO Refactor
+    // allSettings is a list with entries like `{ label: 'Rendering Delay', id: 'rendering-delay', defaultValue: true }`
+    // It is used to keep track of setting information but not their states
     globalState.allSettings = globalState.currentView.settings
-        ? globalState.currentSettings.concat(globalState.currentView.settings)
-        : globalState.currentSettings;
+        ? globalState.allSettings.concat(globalState.currentView.settings)
+        : globalState.allSettings;
+    // currentSettings is an object with entries like `{ 'rendering-delay': true }`
+    // It handles the states of the settings
     globalState.allSettings.forEach(setting => {
         globalState.currentSettings[setting.id] = globalState.currentSettings[setting.id] ?? setting.defaultValue ?? false;
     });
@@ -42,7 +47,7 @@ function renderElements(renderId) {
     let delayAmount = 0;
 
     // Fun setting for showing the graph generation
-    if (globalState.currentSettings['rendering-delay']) {
+    if (globalState.currentSettings['rendering-delay']) { // TODO Refactor
         // ensures that it takes the same amount of time to render a few elements as it does to render many
         delayAmount = Math.max(-0.25 * Object.keys(elements).length + 32.5, 0);
     }
@@ -52,6 +57,7 @@ function renderElements(renderId) {
             if (renderId !== currentRenderId) return;
             if (item.previous && !elements[item.previous]) return;
 
+            // TODO Refactor
             for (const setting of globalState.currentView.settings ?? []) {
                 if (item[setting.property] && globalState.currentSettings[setting.id]) return;
             }

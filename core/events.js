@@ -74,6 +74,10 @@ export function attachElementEventListeners(element) {
         .style('cursor', 'pointer');
 }
 
+// =========================
+// Sidebar Functions
+// =========================
+
 // Resets the sidebar to its default state
 export function resetSidebar() {
     persistent = false;
@@ -101,6 +105,10 @@ export function updateSidebar(event) {
     updateInfo(target.getAttribute('data-info') || "No additional information.");
 }
 
+// =========================
+// Settings Menu Functions
+// =========================
+
 // Handles the click event for the settings button
 export const createSettings = (event) => {
     event.stopPropagation();
@@ -109,20 +117,55 @@ export const createSettings = (event) => {
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
 
+    // TODO Refactor
     globalState.allSettings.forEach(setting => {
         let container;
         if (setting.type === 'dropdown') {
-            container = createDropdownSetting(setting, event);
+            container = createDropdownSetting(setting);
         } else {
-            container = createToggleSetting(setting, event);
+            container = createToggleSetting(setting);
         }
         infoElement.appendChild(container);
     });
+
+    const advancedSettingsButton = document.createElement('button');
+    advancedSettingsButton.textContent = 'Advanced Settings';
+    advancedSettingsButton.style.marginTop = 'auto';
+    advancedSettingsButton.addEventListener('click', createAdvancedSettings);
+    infoElement.appendChild(advancedSettingsButton);
+};
+
+import { parseArchitectureFile } from './parseArchitectureFormat.js';
+import { initializeApp } from '../main.js';
+
+export const createAdvancedSettings = (event) => {
+    event.stopPropagation();
+
+    const infoElement = document.getElementById('info');
+    infoElement.innerHTML = '';
+
+    const clearArchitecturesButton = document.createElement('button');
+    clearArchitecturesButton.textContent = 'Clear Saved Architectures';
+    clearArchitecturesButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all saved architectures? This action cannot be undone.')) {
+            localStorage.removeItem('architectures');
+            console.debug('Cleared all saved architectures.');
+            parseArchitectureFile('../standard_items/architectures.txt')
+                .then(architectures => {
+                    initializeApp(architectures);
+                })
+                .catch(error => {
+                    console.error('Error parsing architecture:', error);
+                    initializeApp();
+                });
+        }
+    });
+    infoElement.appendChild(clearArchitecturesButton);
 };
 
 // Draws the dropdown menu in the settings
 // Currently only written for theme dropdown, would need to be modified for other dropdowns
-function createDropdownSetting(setting, event) {
+function createDropdownSetting(setting) {
     const container = document.createElement('div');
     container.className = 'switch-container';
 
@@ -141,30 +184,30 @@ function createDropdownSetting(setting, event) {
         select.appendChild(optionElement);
     });
 
-    select.value = globalState.currentSettings[setting.id] || 'default';
+    select.value = globalState.currentSettings[setting.id] || 'default'; // TODO Refactor
 
     select.addEventListener('change', (e) => {
         const selectedTheme = e.target.value;
 
         // Reinvert the theme if it was inverted
-        if (globalState.currentSettings['invert-theme']) {
+        if (globalState.currentSettings['invert-theme']) { // TODO Refactor
             invertTheme(globalState.currentTheme, document.documentElement);
         }
 
         // Reset invert-theme setting and slider
-        globalState.currentSettings['invert-theme'] = false;
+        globalState.currentSettings['invert-theme'] = false; // TODO Refactor
         const invertThemeCheckbox = document.getElementById('invert-theme');
         if (invertThemeCheckbox) {
             invertThemeCheckbox.checked = false;
         }
 
-        globalState.currentSettings[setting.id] = selectedTheme;
+        globalState.currentSettings[setting.id] = selectedTheme; // TODO Refactor
 
         globalState.currentTheme = THEMES[selectedTheme] || DEFAULTS.THEME;
         applyTheme(globalState.currentTheme, document.documentElement);
         saveSettings();
         drawContent();
-        createSettings(event);
+        createSettings(e);
     });
 
     container.appendChild(label);
@@ -173,8 +216,8 @@ function createDropdownSetting(setting, event) {
     return container;
 }
 
-// Draws teh default toggle switch for settings
-function createToggleSetting(setting, event) {
+// Draws the default toggle switch for settings
+function createToggleSetting(setting) {
     const container = document.createElement('div');
     container.className = 'switch-container';
 
@@ -186,7 +229,7 @@ function createToggleSetting(setting, event) {
     checkbox.type = 'checkbox';
     checkbox.id = setting.id;
 
-    checkbox.checked = globalState.currentSettings[setting.id];
+    checkbox.checked = globalState.currentSettings[setting.id]; // TODO Refactor
 
     toggle_switch.appendChild(checkbox);
     toggle_switch.appendChild(slider);
@@ -200,21 +243,25 @@ function createToggleSetting(setting, event) {
     container.appendChild(label);
 
     checkbox.addEventListener('change', (e) => {
-        globalState.currentSettings[setting.id] = e.target.checked;
+        globalState.currentSettings[setting.id] = e.target.checked; // TODO Refactor
 
         if (setting.id === 'invert-theme') {
             invertTheme(globalState.currentTheme, document.documentElement);
             drawContent();
-            createSettings(event);
+            createSettings(e);
         } else if (setting.noRedraw ?? true) {
             drawContent();
-            createSettings(event);
+            createSettings(e);
         }
         saveSettings();
     });
 
     return container;
 }
+
+// =========================
+// View Navigator Functions
+// =========================
 
 // Handles the click event for the views menu button
 export const showViews = (event) => {
@@ -327,24 +374,178 @@ function buildViewTree(viewName) {
     return viewContainer;
 }
 
+// ==========================
+// Edit Menu Functions
+// ==========================
+
+// Handles the click event for the nav edit button
+export const showEditOptions = (event) => {
+    event.stopPropagation();
+    persistent = true;
+
+    const infoElement = document.getElementById('info');
+    infoElement.innerHTML = '';
+
+    const optionsContainer = document.createElement('div');
+    optionsContainer.className = 'edit-container';
+
+    const options = [
+        { id: 'edit-architecture', text: 'Edit current architecture' },
+        { id: 'new-architecture', text: 'Create new architecture' },
+        // TODO { id: 'new-component', text: 'Create new component' }
+    ];
+
+    options.forEach(option => {
+        const button = document.createElement('button');
+        button.id = option.id;
+        button.textContent = option.text;
+        button.className = 'edit-button';
+
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateInfo('');
+            // TODO create a new state variable to track if in edit mode, and modify other event listeners accordingly
+
+            switch (option.id) {
+                case 'edit-architecture':
+                    handleEditArchitecture();
+                    break;
+                case 'new-architecture':
+                    handleNewArchitecture();
+                    break;
+                case 'new-component':
+                    handleNewComponent();
+                    break;
+            }
+        });
+
+        optionsContainer.appendChild(button);
+    });
+
+    infoElement.appendChild(optionsContainer);
+};
+
+import { serializeArchitecture, parseArchitectureContent } from './parseArchitectureFormat.js';
+
+// TODO Look for a better editing solution
+// Ideally indentation should be clearer
+// TODO users should be able to add components from a defined list instead of typing them out - for now, think of a clever way to show what is available
+function handleEditArchitecture() {
+    let architecture = '';
+
+    // Display the architectures.txt version of the architecture in a text editor
+    if (Object.keys(globalState.viewStructure).length !== 0) {
+        const currentArchitecture = Object.keys(globalState.viewStructure)[0];
+        const intermediateStructure = globalState.architectures[currentArchitecture];
+        architecture = serializeArchitecture(currentArchitecture, intermediateStructure);
+    }
+
+    createArchitectureEditor(architecture);
+}
+
+function handleNewArchitecture() {
+    globalState.currentView = {};
+    globalState.currentProperties = {};
+    globalState.viewStructure = {};
+    drawContent();
+    createArchitectureEditor();
+}
+
+// XXX Potentially add event listeners for when the user navigates away while unsaved to prompt for saving changes
+function createArchitectureEditor(architectureText = '') {
+    const textarea = document.createElement('textarea');
+    textarea.id = 'architecture-editor';
+    textarea.textContent = architectureText;
+    textarea.spellcheck = false;
+    textarea.wrap = 'off';
+
+    const applyButton = document.createElement('button');
+    applyButton.textContent = 'Apply Changes';
+
+    const applyChanges = (e) => {
+        e.stopPropagation();
+        const newArchitectureText = textarea.value;
+        if (!newArchitectureText.trim()) return;
+
+        let newArchitecture;
+        try {
+            newArchitecture = parseArchitectureContent(newArchitectureText);
+        } catch (error) {
+            console.warn(`Error parsing architecture:\n${error.message}`);
+            // TODO Display this in app instead of using confirm
+            confirm(`Error parsing architecture:\n${error.message}\nPlease check the syntax and try again.`);
+            return;
+        }
+
+        const newArchitectureName = Object.keys(newArchitecture)[0].replace(/_\d+$/, '');
+
+        let architectureName = newArchitectureName;
+        let i = 1;
+        while (globalState.views[architectureName]) {
+            architectureName = `${newArchitectureName}_${i}`;
+            i++;
+        }
+
+        globalState.architectures[architectureName] = Object.values(newArchitecture)[0];
+        saveArchitectures();
+        navigateTo(architectureName);
+        createArchitectureEditor(newArchitectureText);
+        persistent = true;
+    };
+
+    // Add keyboard shortcut for Ctrl+S or Cmd+S
+    textarea.addEventListener('keydown', (e) => {
+        // Check for Ctrl+S (Windows/Linux) or Cmd+S (Mac)
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault(); // Prevent browser's save dialog
+            applyChanges(e);
+        }
+    });
+
+    // Add click handler for the apply button
+    applyButton.addEventListener('click', applyChanges);
+
+    const infoElement = document.getElementById('info');
+    infoElement.appendChild(textarea);
+    infoElement.appendChild(applyButton);
+}
+
+function handleNewComponent() {
+    console.log('Create new component clicked');
+    // Functionality to be implemented
+}
+
 // =========================
 // Local Storage Functions
 // =========================
 
-// Load settings from localStorage
+// TODO Refactor settings
 export function loadSettings() {
     const savedSettings = JSON.parse(localStorage.getItem('currentSettings')) || {};
     Object.keys(savedSettings).forEach(key => {
         globalState.currentSettings[key] = savedSettings[key];
+        console.debug(`Loaded setting: ${key} = ${savedSettings[key]}`);
     });
 
     // Load the saved theme directly
     globalState.currentTheme = JSON.parse(localStorage.getItem('currentTheme')) || DEFAULTS.THEME;
     applyTheme(globalState.currentTheme, document.documentElement);
+
+    const savedArchitectures = JSON.parse(localStorage.getItem('architectures')) || {};
+    Object.keys(savedArchitectures).forEach(key => {
+        if (!globalState.architectures[key]) {
+            globalState.architectures[key] = savedArchitectures[key];
+            console.debug(`Loaded saved architecture: ${key}`);
+        }
+    });
 }
 
-// Save settings and theme to localStorage
 function saveSettings() {
     localStorage.setItem('currentSettings', JSON.stringify(globalState.currentSettings));
+    console.debug('Saved settings:', globalState.currentSettings);
     localStorage.setItem('currentTheme', JSON.stringify(globalState.currentTheme));
+}
+
+function saveArchitectures() {
+    localStorage.setItem('architectures', JSON.stringify(globalState.architectures));
 }

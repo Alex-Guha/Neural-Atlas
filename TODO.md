@@ -26,12 +26,14 @@
 
 ### Separate components into separate files based on what class they are
 
+### Refactor settings management, it's become spaghetti
+### Refactor events.js
+- separate the event listeners and html creation
+- move different event categories to their own files
+- move state variable to global state tracker
+
 
 ### Core Features
-#### Yaml-like Architecure definitions
-- Write a parser for more abstract, yaml-like architecture definitions
-- See TODO in architectures.js
-
 #### Importing
 - Allow for importing the following, so that users may define and share custom versions of each, especially for developing diagrams before adding them to the central repo
   - The architecture yaml-like
@@ -41,12 +43,9 @@
 - Save imported stuff to local storage and recombine with predefined stuff on load
 
 #### Editing and Exporting
-- Togglable nav button to enter editing mode
-  - Clicking this changes the info box to have 3 options: "Edit current architecture", "Create new architecture", "Create new component"
 - Architecture editing mode (making architectures out of components)
-  - Show the flat file yaml-like definition of the architecture in the info box, potentially like a text editor
   - Have some way for the user to select from the component list instead of having them type out the component they want to add
-  - There should be an export button, which downloads the custom/modified architecture
+  - There should be an export button, which downloads the custom/modified architecture(s)
 - Component editing mode (making components out of boxes, text, basic shapes, and other components)
   - The info box defaults to something like: "Select an item to edit or add new items after"
   - Selecting an item changes the info box to have value entry fields and sliders and toggles and w/e for each of the properties a component can have, prepopulated with the default values

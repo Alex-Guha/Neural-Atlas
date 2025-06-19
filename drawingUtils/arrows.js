@@ -12,6 +12,7 @@ const content = d3.select("#content");
 export function drawConnection(arrow, previousItem, item) {
     if (!previousItem) return;
 
+    // TODO Refactor
     for (const setting of globalState.currentView.settings ?? []) {
         if (arrow[setting.property] && globalState.currentSettings[setting.id]) return;
     }

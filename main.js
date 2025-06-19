@@ -3,10 +3,10 @@ import { drawContent } from './core/render.js';
 
 import { DEFAULT_VIEW } from './utils/defaults.js';
 import { globalState } from './utils/state.js'
-import { parseArchitectureFile } from './core/parseArchitectureFile.js';
+import { parseArchitectureFile } from './core/parseArchitectureFormat.js';
 import { parseArchitecture } from './core/parser.js';
 
-function initializeApp(architectures = {}) {
+export function initializeApp(architectures = {}) {
     globalState.architectures = architectures;
     globalState.views[DEFAULT_VIEW] = parseArchitecture(DEFAULT_VIEW);
     globalState.currentView = globalState.views[DEFAULT_VIEW];

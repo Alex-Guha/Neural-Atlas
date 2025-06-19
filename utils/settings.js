@@ -1,5 +1,6 @@
 import * as THEMES from './themes.js';
 
+// TODO Refactor
 export const generalSettings = [
     {
         label: 'Theme:',

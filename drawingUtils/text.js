@@ -15,7 +15,7 @@ export function drawText(item) {
     item.text.forEach(textObject => {
 
         // Don't render the text if it's been toggled off
-        for (const setting of globalState.currentView.settings ?? []) {
+        for (const setting of globalState.currentView.settings ?? []) { // TODO Refactor
             if (textObject[setting.property] && globalState.currentSettings[setting.id]) return;
         }
 
@@ -157,10 +157,10 @@ function createTextLabel(textObject) {
     return textElement;
 }
 
-// Helper that first looks for an integer between 1 and 4 to lookup the color in the globalState.currentTheme, then falls back to assuming the color has been overridden and specified directly.
+// Helper that first looks for an integer between 1 and however many colors are specified, then falls back to assuming the color has been overidden and specified directly.
 function colorSwitch(color) {
     return color
-        ? (typeof color === 'number' && color >= 1 && color <= 4
+        ? (typeof color === 'number' && color >= 1 && color <= globalState.currentTheme.TEXT_COLOR.length
             ? globalState.currentTheme.TEXT_COLOR[color - 1]
             : color
         ) : globalState.currentTheme.TEXT_COLOR[0];
