@@ -1,9 +1,10 @@
-import { attachElementEventListeners, attachDetailEventListeners, resetSidebar } from './events.js';
+import { attachElementEventListeners, attachDetailEventListeners, resetSidebar } from './sidebar.js';
 import { drawNavigation } from './navigation.js';
 import { drawSubcomponent } from '../drawingUtils/shapes.js';
 import { drawConnection } from '../drawingUtils/arrows.js';
 import { drawText } from '../drawingUtils/text.js';
 import { resetZoom } from '../utils/zoom.js';
+import { checkSettingsToggle } from '../utils/settings.js';
 
 import * as DEFAULTS from '../utils/defaults.js';
 import { globalState } from '../utils/state.js';
@@ -57,10 +58,7 @@ function renderElements(renderId) {
             if (renderId !== currentRenderId) return;
             if (item.previous && !elements[item.previous]) return;
 
-            // TODO Refactor
-            for (const setting of globalState.currentView.settings ?? []) {
-                if (item[setting.property] && globalState.currentSettings[setting.id]) return;
-            }
+            if (checkSettingsToggle(item)) return;
 
             // Calculate the position of the item only on the first render
             if (!item.calculated) {

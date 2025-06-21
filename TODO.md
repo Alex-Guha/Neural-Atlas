@@ -27,11 +27,11 @@
 ### Separate components into separate files based on what class they are
 
 ### Refactor settings management, it's become spaghetti
-### Refactor events.js
-- separate the event listeners and html creation
-- move different event categories to their own files
-- move state variable to global state tracker
 
+### Improve architecture edit mode (editMenu.js)
+- better state tracking
+- Code Mirror 5
+- Export
 
 ### Core Features
 #### Importing
@@ -78,7 +78,7 @@ The original code has been completely rewritten and significantly expanded.
 
 ### QoL
 #### Make double-clickable items more noticeable, and add a notice at the top or bottom of the info box to tell the user the item is clickable
-#### Improve the UI for buildViewTree (events.js), offload css to styles.css
+#### Improve the UI for buildViewTree, offload css to styles.css
 - Should have the current architecture and it's view tree at the top, and then the other available architectures below (without expandable view trees since they haven't been generated yet)
 - This will be the primary ways of navigating between architectures
 #### Add a link to the github repo

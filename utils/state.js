@@ -10,4 +10,5 @@ export const globalState = {
     allSettings: generalSettings, // TODO Refactor
     viewStructure: {}, // Used to display the view nav menu in the sidebar
     architectures: {}, // Stores the intermediate architecture structures (so the file doesn't need to be parsed every time)
+    sidebarPersistent: false
 }

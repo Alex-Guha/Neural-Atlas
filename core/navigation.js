@@ -1,6 +1,8 @@
 import { drawContent } from './render.js';
-import { createSettings, showViews, showEditOptions } from './events.js';
-import { parseArchitecture, parseDetail } from './parser.js';
+import { showEditOptions } from '../sidebarMenu/editMenu.js';
+import { showViews } from '../sidebarMenu/viewMenu.js';
+import { createSettings } from '../sidebarMenu/settingsMenu.js';
+import { parseArchitecture, parseDetail } from '../parser/parser.js';
 import { resetZoom } from '../utils/zoom.js';
 import { globalState } from '../utils/state.js'
 

@@ -1,7 +1,8 @@
 import { drawText } from './text.js';
+import { checkSettingsToggle } from '../utils/settings.js';
 
-import * as DEFAULTS from '../utils/defaults.js';
 import { globalState } from '../utils/state.js'
+import * as DEFAULTS from '../utils/defaults.js';
 
 const content = d3.select("#content");
 
@@ -12,10 +13,8 @@ const content = d3.select("#content");
 export function drawConnection(arrow, previousItem, item) {
     if (!previousItem) return;
 
-    // TODO Refactor
-    for (const setting of globalState.currentView.settings ?? []) {
-        if (arrow[setting.property] && globalState.currentSettings[setting.id]) return;
-    }
+    // Allows arrows to be togglable
+    if (checkSettingsToggle(arrow)) return;
 
     // Makes these properties hierarchical. arrow > item > nonexistent
     ['info', 'details', 'references'].forEach(key => {

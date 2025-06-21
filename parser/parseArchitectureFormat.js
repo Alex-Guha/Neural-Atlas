@@ -1,3 +1,5 @@
+// LLM generated, it just works idk
+
 /*
 import { parseArchitectureFile } from './parseArchitecture.js';
 

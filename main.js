@@ -1,10 +1,10 @@
-import { loadSettings } from './core/events.js';
+import { loadSettings } from './utils/storage.js';
 import { drawContent } from './core/render.js';
 
 import { DEFAULT_VIEW } from './utils/defaults.js';
 import { globalState } from './utils/state.js'
-import { parseArchitectureFile } from './core/parseArchitectureFormat.js';
-import { parseArchitecture } from './core/parser.js';
+import { parseArchitectureFile } from './parser/parseArchitectureFormat.js';
+import { parseArchitecture } from './parser/parser.js';
 
 export function initializeApp(architectures = {}) {
     globalState.architectures = architectures;

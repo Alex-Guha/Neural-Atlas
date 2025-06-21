@@ -1,3 +1,5 @@
+import { checkSettingsToggle } from '../utils/settings.js';
+
 import { globalState } from '../utils/state.js';
 
 const content = d3.select("#content");
@@ -15,9 +17,7 @@ export function drawText(item) {
     item.text.forEach(textObject => {
 
         // Don't render the text if it's been toggled off
-        for (const setting of globalState.currentView.settings ?? []) { // TODO Refactor
-            if (textObject[setting.property] && globalState.currentSettings[setting.id]) return;
-        }
+        if (checkSettingsToggle(textObject)) return;
 
         // Using architecture specific properties, replace any {{property}} placeholders in the text with the corresponding property.
         const templateRegex = /\{\{([^}|]+)(\|([^}]+))?\}\}/g;

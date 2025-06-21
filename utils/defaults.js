@@ -1,4 +1,5 @@
-export const DEFAULT_VIEW = 'llama2_7B_abstract'; //test
+export const DEFAULT_VIEW = 'llama2_7B_abstract';
+//export const DEFAULT_VIEW = 'test';
 
 export const THEME = {
     BACKGROUND: '#1a1a1a',
