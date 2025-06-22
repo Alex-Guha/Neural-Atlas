@@ -16,19 +16,25 @@ export const createSettings = (event) => {
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
 
-    // TODO Refactor
-    globalState.allSettings.forEach(setting => {
+    [{ id: 'theme-selector' }, { id: 'rendering-delay' }, { id: 'invert-theme' }].concat(globalState.currentView.settings).forEach(currentSetting => {
+        const setting = globalState.settings[currentSetting.id];
         let container;
-        if (setting.type === 'dropdown') {
-            container = createDropdownSetting(setting);
-        } else {
-            container = createToggleSetting(setting);
+        switch (setting.type) {
+            case 'dropdown':
+                container = createDropdownSetting(setting);
+                break;
+            case 'toggle':
+                container = createToggleSetting(setting);
+                break;
+            default:
+                container = createToggleSetting(setting);
+                break;
         }
         infoElement.appendChild(container);
     });
 
     const advancedSettingsButton = document.createElement('button');
-    advancedSettingsButton.textContent = 'Advanced Settings';
+    advancedSettingsButton.textContent = 'Advanced';
     advancedSettingsButton.style.marginTop = 'auto';
     advancedSettingsButton.addEventListener('click', createAdvancedSettings);
     infoElement.appendChild(advancedSettingsButton);
@@ -80,24 +86,24 @@ function createDropdownSetting(setting) {
         select.appendChild(optionElement);
     });
 
-    select.value = globalState.currentSettings[setting.id] || 'default'; // TODO Refactor
+    select.value = setting.state;
 
     select.addEventListener('change', (e) => {
         const selectedTheme = e.target.value;
 
         // Reinvert the theme if it was inverted
-        if (globalState.currentSettings['invert-theme']) { // TODO Refactor
+        if (globalState.settings['invert-theme'].state) {
             invertTheme(globalState.currentTheme, document.documentElement);
         }
 
         // Reset invert-theme setting and slider
-        globalState.currentSettings['invert-theme'] = false; // TODO Refactor
+        globalState.settings['invert-theme'].state = false;
         const invertThemeCheckbox = document.getElementById('invert-theme');
         if (invertThemeCheckbox) {
             invertThemeCheckbox.checked = false;
         }
 
-        globalState.currentSettings[setting.id] = selectedTheme; // TODO Refactor
+        setting.state = selectedTheme;
 
         globalState.currentTheme = THEMES[selectedTheme] || DEFAULTS.THEME;
         applyTheme(globalState.currentTheme, document.documentElement);
@@ -125,7 +131,7 @@ function createToggleSetting(setting) {
     checkbox.type = 'checkbox';
     checkbox.id = setting.id;
 
-    checkbox.checked = globalState.currentSettings[setting.id]; // TODO Refactor
+    checkbox.checked = setting.state;
 
     toggle_switch.appendChild(checkbox);
     toggle_switch.appendChild(slider);
@@ -139,7 +145,7 @@ function createToggleSetting(setting) {
     container.appendChild(label);
 
     checkbox.addEventListener('change', (e) => {
-        globalState.currentSettings[setting.id] = e.target.checked; // TODO Refactor
+        setting.state = e.target.checked;
 
         if (setting.id === 'invert-theme') {
             invertTheme(globalState.currentTheme, document.documentElement);

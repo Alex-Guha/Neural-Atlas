@@ -3,13 +3,12 @@ import { applyTheme } from './themeUtils.js';
 import { globalState } from './state.js'
 import * as DEFAULTS from './defaults.js';
 
-// TODO Refactor settings
 export function loadSettings() {
-    const savedSettings = JSON.parse(localStorage.getItem('currentSettings')) || {};
+    const savedSettings = JSON.parse(localStorage.getItem('settings')) || {};
     Object.keys(savedSettings).forEach(key => {
-        globalState.currentSettings[key] = savedSettings[key];
-        console.debug(`Loaded setting: ${key} = ${savedSettings[key]}`);
+        globalState.settings[key] = savedSettings[key];
     });
+    console.debug('Loaded settings:', savedSettings);
 
     // Load the saved theme directly
     globalState.currentTheme = JSON.parse(localStorage.getItem('currentTheme')) || DEFAULTS.THEME;
@@ -25,8 +24,8 @@ export function loadSettings() {
 }
 
 export function saveSettings() {
-    localStorage.setItem('currentSettings', JSON.stringify(globalState.currentSettings));
-    console.debug('Saved settings:', globalState.currentSettings);
+    localStorage.setItem('settings', JSON.stringify(globalState.settings));
+    console.debug('Saved settings:', globalState.settings);
     localStorage.setItem('currentTheme', JSON.stringify(globalState.currentTheme));
 }
 

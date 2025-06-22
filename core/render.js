@@ -4,7 +4,7 @@ import { drawSubcomponent } from '../drawingUtils/shapes.js';
 import { drawConnection } from '../drawingUtils/arrows.js';
 import { drawText } from '../drawingUtils/text.js';
 import { resetZoom } from '../utils/zoom.js';
-import { checkSettingsToggle } from '../utils/settings.js';
+import { checkSettingsToggle, initializeSettings } from '../utils/settings.js';
 
 import * as DEFAULTS from '../utils/defaults.js';
 import { globalState } from '../utils/state.js';
@@ -19,17 +19,7 @@ export const drawContent = () => {
     currentRenderId++;
     const renderId = currentRenderId;
 
-    // TODO Refactor
-    // allSettings is a list with entries like `{ label: 'Rendering Delay', id: 'rendering-delay', defaultValue: true }`
-    // It is used to keep track of setting information but not their states
-    globalState.allSettings = globalState.currentView.settings
-        ? globalState.allSettings.concat(globalState.currentView.settings)
-        : globalState.allSettings;
-    // currentSettings is an object with entries like `{ 'rendering-delay': true }`
-    // It handles the states of the settings
-    globalState.allSettings.forEach(setting => {
-        globalState.currentSettings[setting.id] = globalState.currentSettings[setting.id] ?? setting.defaultValue ?? false;
-    });
+    initializeSettings();
 
     content.selectAll('*').remove();
 
@@ -48,7 +38,7 @@ function renderElements(renderId) {
     let delayAmount = 0;
 
     // Fun setting for showing the graph generation
-    if (globalState.currentSettings['rendering-delay']) { // TODO Refactor
+    if (globalState.settings['rendering-delay'].state) {
         // ensures that it takes the same amount of time to render a few elements as it does to render many
         delayAmount = Math.max(-0.25 * Object.keys(elements).length + 32.5, 0);
     }

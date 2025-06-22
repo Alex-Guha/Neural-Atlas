@@ -1,21 +1,25 @@
-import * as THEMES from './themes.js';
-
-// TODO Refactor
-export const generalSettings = [
-    {
-        label: 'Theme:',
-        id: 'theme-selector',
-        type: 'dropdown',
-        options: ['Default', ...Object.keys(THEMES)]
-    },
-    { label: 'Rendering Delay', id: 'rendering-delay', defaultValue: true },
-    { label: 'Invert Theme', id: 'invert-theme' }
-];
-
 import { globalState } from '../utils/state.js'
 
 export const checkSettingsToggle = (obj) => {
     for (const setting of globalState.currentView.settings ?? []) {
-        if (obj[setting.property] && globalState.currentSettings[setting.id]) return true;
+        if (obj[setting.property] && globalState.settings[setting.id].state) return true;
     }
+};
+
+
+export const initializeSettings = () => {
+    globalState.currentView.settings.forEach(setting => {
+        if (globalState.settings[setting.id]) return;
+
+        globalState.settings[setting.id] = setting;
+    });
+
+    Object.entries(globalState.settings).forEach(([id, setting]) => {
+        if (setting.state === undefined) {
+            setting.state = setting.defaultValue ?? false;
+        }
+        if (setting.id === undefined) {
+            setting.id = id;
+        }
+    });
 };

@@ -257,7 +257,7 @@ export const testSegmentedArrows = {
                 {
                     segments: [
                         { direction: 'left', extraLength: DEFAULTS.SHAPE.width / 4 },
-                        { direction: 'up', extraLength: DEFAULTS.SHAPE.separation * 2 + DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'up', extraLength: DEFAULTS.SHAPE.height + DEFAULTS.SHAPE.separation + DEFAULTS.SHAPE.width / 4 },
                         { direction: 'right' },
                         { direction: 'down' },
                     ],
@@ -299,7 +299,7 @@ export const testSegmentedArrows = {
                 {
                     segments: [
                         { direction: 'up', extraLength: DEFAULTS.SHAPE.width / 4, xOffset: DEFAULTS.SHAPE.width / 4 },
-                        { direction: 'right', extraLength: DEFAULTS.SHAPE.separation * 2 },
+                        { direction: 'right', extraLength: DEFAULTS.SHAPE.width * 2 + DEFAULTS.SHAPE.separation },
                         { direction: 'down' },
                         { direction: 'left', yOffset: -DEFAULTS.SHAPE.width / 4 },
                     ],
@@ -325,7 +325,7 @@ export const testSegmentedArrows = {
                 {
                     segments: [
                         { direction: 'right', extraLength: DEFAULTS.SHAPE.width / 4 },
-                        { direction: 'down', extraLength: DEFAULTS.SHAPE.separation * 2 + DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'down', extraLength: DEFAULTS.SHAPE.height + DEFAULTS.SHAPE.separation + DEFAULTS.SHAPE.width / 4 },
                         { direction: 'left' },
                         { direction: 'up' },
                     ],
@@ -386,7 +386,7 @@ export const testSegmentedArrows = {
                 {
                     segments: [
                         { direction: 'down', extraLength: DEFAULTS.SHAPE.width / 4 },
-                        { direction: 'left', extraLength: DEFAULTS.SHAPE.separation * 2 + DEFAULTS.SHAPE.width / 4 },
+                        { direction: 'left', extraLength: DEFAULTS.SHAPE.width * 2 + DEFAULTS.SHAPE.separation + DEFAULTS.SHAPE.width / 4 },
                         { direction: 'up' },
                         { direction: 'right' },
                     ],

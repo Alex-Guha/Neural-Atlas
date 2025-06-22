@@ -26,8 +26,6 @@
 
 ### Separate components into separate files based on what class they are
 
-### Refactor settings management, it's become spaghetti
-
 ### Improve architecture edit mode (editMenu.js)
 - better state tracking
 - Code Mirror 5
@@ -91,6 +89,7 @@ The original code has been completely rewritten and significantly expanded.
 - flash attention
 - LM size toggles (llama 2 - MHA for 7B and 13B, GQA for 34B and 70B, model dim changes, etc)
 - Raw implementation vs equivalent interpretation
+#### Make component settings view specific so that setting ids can be reused in different views
 
 
 ### Write a README
