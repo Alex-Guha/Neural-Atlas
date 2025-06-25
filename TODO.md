@@ -26,6 +26,7 @@
 
 ### Separate components into separate files based on what class they are
 
+
 ### Improve architecture edit mode (editMenu.js)
 - better state tracking
 - Code Mirror 5
@@ -83,13 +84,17 @@ The original code has been completely rewritten and significantly expanded.
 #### Allow for non-sequential component combination in architectures
 - i.e. if multiple components want to branch off one.
 - Would require the ability to specify a previous in the architecture
-#### Architecture changing toggles
+#### Architecture changing settings
 - batch tensor
 - inference vs training
 - flash attention
 - LM size toggles (llama 2 - MHA for 7B and 13B, GQA for 34B and 70B, model dim changes, etc)
 - Raw implementation vs equivalent interpretation
 #### Make component settings view specific so that setting ids can be reused in different views
+#### Consider reworking state
+- State could include everything relevant to a users experience, like undo/redo history
+- We could just save the entire state directly whenever a user does anything
+  - we might want to keep a visit record on views and prune ones that aren't visited, depends how large views can conceivably be
 
 
 ### Write a README
@@ -115,6 +120,7 @@ Add the ability to compare two architectures visually (highlighting the differen
 - Add an overlay on webpage first load with indicators for every clickable element telling users how to interact with the app
   - This should vanish when the user clicks anything
   - There can be an info button in a corner to reopen the overlay
+- https://chatgpt.com/share/685b28f4-c98c-8001-942b-a7ccb2da2a32
 
 #### Zoom
 - Currently, zoom.js gives the svg content an offset of (100, 150).
@@ -123,7 +129,6 @@ Add the ability to compare two architectures visually (highlighting the differen
 - This may not be possible for the first rendering, since the zoom is reset in drawContent before the svg is rendered, so content_height doesn't exist yet.
 
 #### Navigation
-- Save the view (on changing views) in local storage and load it (via loadSettings) on page load
 - Make the settings and views buttons mouseover behavior persist when the button has been clicked (i.e. when the settings or views menu is open), and reset when the resetSidebar event is called
 
 #### Arrows

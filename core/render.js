@@ -5,6 +5,7 @@ import { drawConnection } from '../drawingUtils/arrows.js';
 import { drawText } from '../drawingUtils/text.js';
 import { resetZoom } from '../utils/zoom.js';
 import { checkSettingsToggle, initializeSettings } from '../utils/settings.js';
+import { saveArchitectureView } from '../utils/storage.js';
 
 import * as DEFAULTS from '../utils/defaults.js';
 import { globalState } from '../utils/state.js';
@@ -27,11 +28,12 @@ export const drawContent = () => {
     drawNavigation();
     resetSidebar();
     renderElements(renderId);
+    saveArchitectureView();
 };
 
 // Iterates through the view and renders each element
 function renderElements(renderId) {
-    const elements = globalState.currentView.content;
+    const elements = globalState.views[globalState.currentView].content;
     if (!elements) return;
 
     let delay = 0;

@@ -74,7 +74,7 @@ function handleEditArchitecture() {
 }
 
 function handleNewArchitecture() {
-    globalState.currentView = {};
+    globalState.currentView = '';
     globalState.currentProperties = {};
     globalState.viewStructure = {};
     drawContent();

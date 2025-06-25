@@ -98,7 +98,7 @@ export function updateReferences(elementReferences = null) {
     const referencesList = document.getElementById('references-list');
     referencesList.innerHTML = '';
 
-    const refsToRender = JSON.parse(elementReferences) || globalState.currentView.references;
+    const refsToRender = JSON.parse(elementReferences) || globalState.views[globalState.currentView].references;
 
     if (refsToRender) {
         refsToRender.forEach(ref => {

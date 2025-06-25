@@ -16,7 +16,7 @@ export const createSettings = (event) => {
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
 
-    [{ id: 'theme-selector' }, { id: 'rendering-delay' }, { id: 'invert-theme' }].concat(globalState.currentView.settings).forEach(currentSetting => {
+    [{ id: 'theme-selector' }, { id: 'rendering-delay' }, { id: 'invert-theme' }].concat(globalState.views[globalState.currentView].settings).forEach(currentSetting => {
         const setting = globalState.settings[currentSetting.id];
         let container;
         switch (setting.type) {

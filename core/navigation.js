@@ -17,20 +17,22 @@ let redoHistory = [];
 // Handles changing views
 export const navigateTo = (view) => {
     if (!globalState.views[view]) {
-        if (globalState.architectures[view])
+        if (globalState.architectures[view]) {
             globalState.views[view] = parseArchitecture(view);
-        else if (components[view])
+            globalState.currentArchitecture = view;
+        } else if (components[view])
             globalState.views[view] = parseDetail(view);
         else {
             console.error(`View ${view} not found.`);
             return;
         }
     } else if (globalState.architectures[view]) {
+        globalState.currentArchitecture = view;
         globalState.currentProperties = globalState.views[view].properties;
     }
     undoHistory.push(globalState.currentView);
     redoHistory = [];
-    globalState.currentView = globalState.views[view];
+    globalState.currentView = view;
     drawContent();
 };
 
@@ -38,6 +40,8 @@ const navigateBack = () => {
     if (undoHistory.length > 0) {
         redoHistory.push(globalState.currentView);
         globalState.currentView = undoHistory.pop();
+        if (globalState.architectures[globalState.currentView])
+            globalState.currentArchitecture = globalState.currentView;
         drawContent();
     }
 };
@@ -46,6 +50,8 @@ const navigateForward = () => {
     if (redoHistory.length > 0) {
         undoHistory.push(globalState.currentView);
         globalState.currentView = redoHistory.pop();
+        if (globalState.architectures[globalState.currentView])
+            globalState.currentArchitecture = globalState.currentView;
         drawContent();
     }
 };

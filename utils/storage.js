@@ -1,4 +1,5 @@
 import { applyTheme } from './themeUtils.js';
+import { parseArchitecture } from '../parser/parser.js';
 
 import { globalState } from './state.js'
 import * as DEFAULTS from './defaults.js';
@@ -13,7 +14,16 @@ export function loadSettings() {
     // Load the saved theme directly
     globalState.currentTheme = JSON.parse(localStorage.getItem('currentTheme')) || DEFAULTS.THEME;
     applyTheme(globalState.currentTheme, document.documentElement);
+}
 
+export function saveSettings() {
+    localStorage.setItem('settings', JSON.stringify(globalState.settings));
+    console.debug('Saved settings:', globalState.settings);
+    localStorage.setItem('currentTheme', JSON.stringify(globalState.currentTheme));
+}
+
+// Only appends saved architectures, doesn't overwrite ones read from file at startup
+export function loadArchitectures() {
     const savedArchitectures = JSON.parse(localStorage.getItem('architectures')) || {};
     Object.keys(savedArchitectures).forEach(key => {
         if (!globalState.architectures[key]) {
@@ -23,12 +33,21 @@ export function loadSettings() {
     });
 }
 
-export function saveSettings() {
-    localStorage.setItem('settings', JSON.stringify(globalState.settings));
-    console.debug('Saved settings:', globalState.settings);
-    localStorage.setItem('currentTheme', JSON.stringify(globalState.currentTheme));
-}
-
 export function saveArchitectures() {
     localStorage.setItem('architectures', JSON.stringify(globalState.architectures));
+}
+
+
+export function loadArchitectureView() {
+    const currentArchitecture = localStorage.getItem('currentArchitecture') || DEFAULTS.DEFAULT_VIEW;
+    globalState.currentArchitecture = currentArchitecture;
+
+    globalState.views[currentArchitecture] = parseArchitecture(currentArchitecture);
+    globalState.currentView = currentArchitecture;
+}
+
+export function saveArchitectureView() {
+    saveArchitectures();
+
+    localStorage.setItem('currentArchitecture', globalState.currentArchitecture);
 }

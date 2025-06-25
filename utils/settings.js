@@ -1,14 +1,14 @@
 import { globalState } from '../utils/state.js'
 
 export const checkSettingsToggle = (obj) => {
-    for (const setting of globalState.currentView.settings ?? []) {
+    for (const setting of globalState.views[globalState.currentView].settings ?? []) {
         if (obj[setting.property] && globalState.settings[setting.id].state) return true;
     }
 };
 
 
 export const initializeSettings = () => {
-    globalState.currentView.settings.forEach(setting => {
+    globalState.views[globalState.currentView].settings.forEach(setting => {
         if (globalState.settings[setting.id]) return;
 
         globalState.settings[setting.id] = setting;

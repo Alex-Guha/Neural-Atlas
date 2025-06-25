@@ -1,25 +1,24 @@
-import { loadSettings } from './utils/storage.js';
+import { loadSettings, loadArchitectures, loadArchitectureView } from './utils/storage.js';
 import { drawContent } from './core/render.js';
 
-import { DEFAULT_VIEW } from './utils/defaults.js';
 import { globalState } from './utils/state.js'
 import { parseArchitectureFile } from './parser/parseArchitectureFormat.js';
-import { parseArchitecture } from './parser/parser.js';
 
-export function initializeApp(architectures = {}) {
-    globalState.architectures = architectures;
-    globalState.views[DEFAULT_VIEW] = parseArchitecture(DEFAULT_VIEW);
-    globalState.currentView = globalState.views[DEFAULT_VIEW];
-
+export function initializeApp() {
     loadSettings();
+    loadArchitectures();
+    loadArchitectureView();
     drawContent();
 }
 
-// Load architectures first, then initialize the app
+// We only need to call parseArchitectureFile if loadArchitectures() results in an empty globalState.architectures or there were updates to the file.
+// However, I can't think of a way to check for updates to the file easily, so we can simply always call parseArchitectureFile,
+//   which will also implicitly ensure those architectures are up to date in localStorage.
 window.onload = function () {
     parseArchitectureFile('../standard_items/architectures.txt')
         .then(architectures => {
-            initializeApp(architectures);
+            globalState.architectures = architectures;
+            initializeApp();
         })
         .catch(error => {
             console.error('Error parsing architecture:', error);
