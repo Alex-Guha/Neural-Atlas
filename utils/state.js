@@ -6,7 +6,7 @@ export const globalState = {
     currentView: null, // Contains the name of the current view
     currentArchitecture: null, // Contains the name of the current architecture
     currentTheme: THEME, // This could be refactored to being settings['theme-selector'].state
-    currentProperties: {}, // Used for architecture specific text replacement - this could be refactored out now that currentArchitecture is tracked
+    currentProperties: {}, // This could be refactored out now that currentArchitecture is tracked - Used for architecture specific text replacement
     viewStructure: {}, // Used to display the view nav menu in the sidebar
     architectures: {}, // Stores the intermediate architecture structures (so the file doesn't need to be parsed every time)
     sidebarPersistent: false,

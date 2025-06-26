@@ -30,7 +30,6 @@ export function parseArchitecture(architectureName) {
 
     // Used to display the view nav menu in the sidebar
     // This will contain pointers to detail views
-    globalState.viewStructure = {};
     globalState.viewStructure[architectureName] = [];
 
     // Stitch together content
@@ -56,7 +55,7 @@ export function parseArchitecture(architectureName) {
 // Parses details and creates the corresponding view
 // Essentially a wrapper on buildComponent
 export function parseDetail(detailName, parentComponentChain = [], overrides = null) {
-    console.debug(`Building view ${detailName}`);
+    //console.debug(`Building view ${detailName}`);
 
     // The flat view structure
     const detail = {
@@ -75,7 +74,7 @@ export function parseDetail(detailName, parentComponentChain = [], overrides = n
 
 // Recursively builds the component and adds it to viewDetails. Used for both architectures and details.
 function buildComponent(componentID, viewDetails, viewName, parentComponentChain = [], swapModules = null) {
-    console.debug(`Building component ${componentID}`);
+    //console.debug(`Building component ${componentID}`);
 
     // Remove any suffixes like _1, _2, etc. to get the base component ID
     // Why: So that components can be used multiple times in the same architecture
@@ -96,15 +95,7 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
     const componentChain = [...parentComponentChain, componentID];
 
     // Handle component-level detail specification
-    if (targetComponent.details && !globalState.views[targetComponent.details]) {
-
-        // Add the new view to the nav menu view tracker
-        globalState.viewStructure[viewName].push(targetComponent.details);
-
-        // overrides here is used to pass in any architecture-specific overrides for the component
-        //     This is specifically used for abstract_components
-        globalState.views[targetComponent.details] = parseDetail(targetComponent.details, parentComponentChain, swapModules);
-    }
+    handleDetails(targetComponent, viewName, componentChain, swapModules);
 
     // Because we change item id, we need to also change any future references to it
     // So, we map the old id to the new id, and update the previous property if it exists
@@ -197,28 +188,14 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
             viewDetails.content[newItemID].info = targetComponent.info;
 
         // Handle constructing details if specified and not already built
-        if (item.details && !globalState.views[item.details]) {
-
-            // Add the new view to the nav menu view tracker
-            globalState.viewStructure[viewName].push(item.details);
-
-            // overrides here is used to pass in any architecture-specific overrides for the component
-            //     This is specifically used for abstract_components
-            globalState.views[item.details] = parseDetail(item.details, parentComponentChain, swapModules);
-        }
+        handleDetails(item, viewName, parentComponentChain, swapModules);
 
         // Similar to the above item detail handling, we also check the arrows for details.
         if (Array.isArray(item.arrow) && item.arrow.length > 0) {
             for (const arrow of item.arrow)
-                if (arrow.details && !globalState.views[arrow.details]) {
-                    globalState.viewStructure[viewName].push(arrow.details);
-                    globalState.views[arrow.details] = parseDetail(arrow.details, parentComponentChain, swapModules);
-                }
+                handleDetails(arrow, viewName, parentComponentChain, swapModules);
         } else if (item.arrow) {
-            if (item.arrow.details && !globalState.views[item.arrow.details]) {
-                globalState.viewStructure[viewName].push(item.arrow.details);
-                globalState.views[item.arrow.details] = parseDetail(item.arrow.details, parentComponentChain, swapModules);
-            }
+            handleDetails(item.arrow, viewName, parentComponentChain, swapModules);
         }
     });
 
@@ -234,4 +211,38 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
             (newReference) => !viewDetails.references.some((existingReference) => existingReference.title === newReference.title)
         )
     );
+}
+
+function handleDetails(targetItem, viewName, parentComponentChain, swapModules) {
+    if (targetItem.details && !globalState.views[targetItem.details] && (swapModules == null || Object.keys(swapModules).length === 0)) {
+        // The detail is generic and hasn't been made yet
+
+        // Add the new view to the nav menu view tracker
+        globalState.viewStructure[viewName].push(targetItem.details);
+
+        globalState.views[targetItem.details] = parseDetail(targetItem.details, parentComponentChain, null);
+
+    } else if (targetItem.details && globalState.views[targetItem.details] && (swapModules == null || Object.keys(swapModules).length === 0)) {
+        // The detail is generic and already exists
+
+        globalState.viewStructure[viewName].push(targetItem.details);
+
+    } else if (targetItem.details) {
+        // The detail is unique/architecture-specific
+
+        // This code will result in never reusing any detail, i.e. always creating a new view
+        let newDetailName = `${targetItem.details}`;
+        let i = 1;
+        while (globalState.views[newDetailName]) {
+            newDetailName = `${targetItem.details}_${i}`;
+            i++;
+        }
+
+        // overrides here is used to pass in any architecture-specific overrides for the component
+        //     This is specifically used for abstract components
+        globalState.views[newDetailName] = parseDetail(targetItem.details, parentComponentChain, swapModules);
+
+        targetItem.details = newDetailName;
+        globalState.viewStructure[viewName].push(newDetailName);
+    }
 }

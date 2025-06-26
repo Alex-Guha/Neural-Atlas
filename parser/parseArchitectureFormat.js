@@ -416,17 +416,6 @@ function serializeStructure(structure, indent) {
     const indentStr = ' '.repeat(indent);
     let result = '';
 
-    // Handle special sections first
-    if (structure.references) {
-        result += `${indentStr}references:\n`;
-        result += serializeReferences(structure.references, indent + 4);
-    }
-
-    if (structure.properties) {
-        result += `${indentStr}properties:\n`;
-        result += serializeProperties(structure.properties, indent + 4);
-    }
-
     // Process all other keys
     for (const [key, value] of Object.entries(structure)) {
         if (key === 'references' || key === 'properties') {
@@ -449,6 +438,16 @@ function serializeStructure(structure, indent) {
             result += `${indentStr}${key}:\n`;
             result += serializeStructure(value, indent + 4);
         }
+    }
+
+    // Handle special sections
+    if (structure.properties) {
+        result += `${indentStr}properties:\n`;
+        result += serializeProperties(structure.properties, indent + 4);
+    }
+    if (structure.references) {
+        result += `${indentStr}references:\n`;
+        result += serializeReferences(structure.references, indent + 4);
     }
 
     return result;

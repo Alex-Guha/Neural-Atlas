@@ -77,9 +77,6 @@ The original code has been completely rewritten and significantly expanded.
 
 ### QoL
 #### Make double-clickable items more noticeable, and add a notice at the top or bottom of the info box to tell the user the item is clickable
-#### Improve the UI for buildViewTree, offload css to styles.css
-- Should have the current architecture and it's view tree at the top, and then the other available architectures below (without expandable view trees since they haven't been generated yet)
-- This will be the primary ways of navigating between architectures
 #### Add a link to the github repo
 #### Allow for non-sequential component combination in architectures
 - i.e. if multiple components want to branch off one.

@@ -64,8 +64,8 @@ function handleEditArchitecture() {
     let architecture = '';
 
     // Display the architectures.txt version of the architecture in a text editor
-    if (Object.keys(globalState.viewStructure).length !== 0) {
-        const currentArchitecture = Object.keys(globalState.viewStructure)[0];
+    if (globalState.currentArchitecture !== '') {
+        const currentArchitecture = globalState.currentArchitecture;
         const intermediateStructure = globalState.architectures[currentArchitecture];
         architecture = serializeArchitecture(currentArchitecture, intermediateStructure);
     }
@@ -76,7 +76,6 @@ function handleEditArchitecture() {
 function handleNewArchitecture() {
     globalState.currentView = '';
     globalState.currentProperties = {};
-    globalState.viewStructure = {};
     drawContent();
     createArchitectureEditor();
 }
@@ -87,6 +86,7 @@ function createArchitectureEditor(architectureText = '') {
     // var myCodeMirror = CodeMirror.fromTextArea(textarea);
     // - Ideally indentation should be clearer
     // - users should be able to add components from a defined list instead of typing them out - for now, think of a clever way to show what is available
+    // TODO Another possible alternative is to use editable divs in a vertical flexbox, probably way mroe difficult though
     const textarea = document.createElement('textarea');
     textarea.id = 'architecture-editor';
     textarea.textContent = architectureText;

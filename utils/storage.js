@@ -9,7 +9,7 @@ export function loadSettings() {
     Object.keys(savedSettings).forEach(key => {
         globalState.settings[key] = savedSettings[key];
     });
-    console.debug('Loaded settings:', savedSettings);
+    //console.debug('Loaded settings:', savedSettings);
 
     // Load the saved theme directly
     globalState.currentTheme = JSON.parse(localStorage.getItem('currentTheme')) || DEFAULTS.THEME;
@@ -18,7 +18,7 @@ export function loadSettings() {
 
 export function saveSettings() {
     localStorage.setItem('settings', JSON.stringify(globalState.settings));
-    console.debug('Saved settings:', globalState.settings);
+    //console.debug('Saved settings:', globalState.settings);
     localStorage.setItem('currentTheme', JSON.stringify(globalState.currentTheme));
 }
 
@@ -28,7 +28,7 @@ export function loadArchitectures() {
     Object.keys(savedArchitectures).forEach(key => {
         if (!globalState.architectures[key]) {
             globalState.architectures[key] = savedArchitectures[key];
-            console.debug(`Loaded saved architecture: ${key}`);
+            //console.debug(`Loaded saved architecture: ${key}`);
         }
     });
 }
