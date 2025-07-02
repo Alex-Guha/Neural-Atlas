@@ -26,13 +26,14 @@ export const drawContent = () => {
 
     resetZoom();
     drawNavigation();
-    resetSidebar();
     renderElements(renderId);
     saveArchitectureView();
+    resetSidebar();
 };
 
 // Iterates through the view and renders each element
 function renderElements(renderId) {
+    if (!globalState.views[globalState.currentView]) return;
     const elements = globalState.views[globalState.currentView].content;
     if (!elements) return;
 

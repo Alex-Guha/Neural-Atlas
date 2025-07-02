@@ -121,13 +121,6 @@ Add the ability to compare two architectures visually (highlighting the differen
   - There can be an info button in a corner to reopen the overlay
 - https://chatgpt.com/share/685b28f4-c98c-8001-942b-a7ccb2da2a32
 
-#### Zoom
-- Currently, zoom.js gives the svg content an offset of (100, 250).
-- Instead, use this to center the content vertically.
-- So, translate by (100, view_height / 2 - content_height / 2)
-- This may not be possible for the first rendering, since the zoom is reset in drawContent before the svg is rendered, so content_height doesn't exist yet.
-  - Maybe reset zoom to (100, 250) first, render, and then reset using heights
-
 #### Navigation
 - Make the settings and views buttons mouseover behavior persist when the button has been clicked (i.e. when the settings or views menu is open), and reset when the resetSidebar event is called
 

@@ -1,5 +1,7 @@
 import { applyTheme } from './themeUtils.js';
 import { parseArchitecture } from '../parser/parser.js';
+import { parseArchitectureFile } from '../parser/parseArchitectureFormat.js';
+import { initializeApp } from '../main.js';
 
 import { globalState } from './state.js'
 import * as DEFAULTS from './defaults.js';
@@ -35,6 +37,19 @@ export function loadArchitectures() {
 
 export function saveArchitectures() {
     localStorage.setItem('architectures', JSON.stringify(globalState.architectures));
+}
+
+export function clearArchitectures() {
+    localStorage.removeItem('architectures');
+    parseArchitectureFile('../standard_items/architectures.txt')
+        .then(architectures => {
+            globalState.architectures = architectures;
+            initializeApp();
+        })
+        .catch(error => {
+            console.error('Error parsing architecture:', error);
+            initializeApp();
+        });
 }
 
 

@@ -8,11 +8,13 @@ export const checkSettingsToggle = (obj) => {
 
 
 export const initializeSettings = () => {
-    globalState.views[globalState.currentView].settings.forEach(setting => {
-        if (globalState.settings[setting.id]) return;
+    if (globalState.views[globalState.currentView] && globalState.views[globalState.currentView].settings) {
+        globalState.views[globalState.currentView].settings.forEach(setting => {
+            if (globalState.settings[setting.id]) return;
 
-        globalState.settings[setting.id] = setting;
-    });
+            globalState.settings[setting.id] = setting;
+        });
+    }
 
     Object.entries(globalState.settings).forEach(([id, setting]) => {
         if (setting.state === undefined) {

@@ -1,8 +1,6 @@
 import { drawContent } from '../core/render.js';
-import { parseArchitectureFile } from '../parser/parseArchitectureFormat.js';
-import { initializeApp } from '../main.js';
 import { applyTheme, invertTheme } from '../utils/themeUtils.js';
-import { saveSettings } from '../utils/storage.js';
+import { saveSettings, clearArchitectures } from '../utils/storage.js';
 
 import { globalState } from '../utils/state.js'
 import * as DEFAULTS from '../utils/defaults.js';
@@ -50,16 +48,7 @@ export const createAdvancedSettings = (event) => {
     clearArchitecturesButton.textContent = 'Clear Saved Architectures';
     clearArchitecturesButton.addEventListener('click', () => {
         if (confirm('Are you sure you want to clear all saved architectures? This action cannot be undone.')) {
-            localStorage.removeItem('architectures');
-            console.debug('Cleared all saved architectures.');
-            parseArchitectureFile('../standard_items/architectures.txt')
-                .then(architectures => {
-                    initializeApp(architectures);
-                })
-                .catch(error => {
-                    console.error('Error parsing architecture:', error);
-                    initializeApp();
-                });
+            clearArchitectures();
         }
     });
     infoElement.appendChild(clearArchitecturesButton);
