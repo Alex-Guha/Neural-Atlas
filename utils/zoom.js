@@ -10,6 +10,6 @@ export function resetZoom() {
 
     svg.transition().duration(500).call(
         zoom.transform,
-        d3.zoomIdentity.translate(100, 150).scale(0.70)
+        d3.zoomIdentity.translate(100, 250).scale(0.70)
     );
 }

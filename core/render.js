@@ -45,11 +45,18 @@ function renderElements(renderId) {
         delayAmount = Math.max(-0.25 * Object.keys(elements).length + 32.5, 0);
     }
 
-    Object.values(elements).forEach(item => {
+    Object.entries(elements).forEach(([id, item]) => {
         setTimeout(() => {
+            // Handles the case where the view is updated while still rendering
             if (renderId !== currentRenderId) return;
-            if (item.previous && !elements[item.previous]) return;
 
+            // Prevents one instance of user error
+            if (item.previous && !elements[item.previous]) {
+                console.warn(`Item "${id}" has a previous item "${item.previous}" that does not exist. Skipping rendering for this item.`);
+                return;
+            }
+
+            // If the item is toggled off, skip rendering it
             if (checkSettingsToggle(item)) return;
 
             // Calculate the position of the item only on the first render
@@ -82,7 +89,9 @@ function renderElements(renderId) {
                         currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height / 2 - item.height / 2 : 0));
                         break;
                     default: // Default to right positioning
-                        currentAbsolutePosition.x += (item.x ?? ((item.separation ?? DEFAULTS.SHAPE.separation) + (previousAbsolutePosition.width ?? 0)));
+                        // Since this is the default, there is an additional check for item.previous, which ensures the first item doesn't get erroneously offset
+                        // This is specifically important for components that can be used either in other components or as a view
+                        currentAbsolutePosition.x += (item.x ?? ((item.previous ? (item.separation ?? DEFAULTS.SHAPE.separation) : 0) + (previousAbsolutePosition.width ?? 0)));
                         // For right positioning, calculate y using centers of previous and item.
                         currentAbsolutePosition.y += (item.y ?? (previousAbsolutePosition.height ? previousAbsolutePosition.height / 2 - item.height / 2 : 0));
                         break;

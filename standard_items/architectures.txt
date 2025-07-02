@@ -7,6 +7,9 @@ testswap:
         swappable: testSwappable
     testEverything
 
+testarrows:
+    testSegmentedArrows
+
 llama2_7B_abstract:
     references:
         "Llama 2 Transformers Code":

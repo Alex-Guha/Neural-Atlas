@@ -92,6 +92,8 @@ The original code has been completely rewritten and significantly expanded.
 - State could include everything relevant to a users experience, like undo/redo history
 - We could just save the entire state directly whenever a user does anything
   - we might want to keep a visit record on views and prune ones that aren't visited, depends how large views can conceivably be
+#### Unify text and latexText
+- Detect latex text by normal conventions like looking for a $ symbol at the start
 
 
 ### Write a README
@@ -120,10 +122,11 @@ Add the ability to compare two architectures visually (highlighting the differen
 - https://chatgpt.com/share/685b28f4-c98c-8001-942b-a7ccb2da2a32
 
 #### Zoom
-- Currently, zoom.js gives the svg content an offset of (100, 150).
+- Currently, zoom.js gives the svg content an offset of (100, 250).
 - Instead, use this to center the content vertically.
 - So, translate by (100, view_height / 2 - content_height / 2)
 - This may not be possible for the first rendering, since the zoom is reset in drawContent before the svg is rendered, so content_height doesn't exist yet.
+  - Maybe reset zoom to (100, 250) first, render, and then reset using heights
 
 #### Navigation
 - Make the settings and views buttons mouseover behavior persist when the button has been clicked (i.e. when the settings or views menu is open), and reset when the resetSidebar event is called
@@ -151,4 +154,6 @@ Stop redrawing references when they are the same as the previous ones, without s
 Look into D3's enter-update-exit pattern to optimize rendering.
 
 
-### Integrate WebGPU to run through real examples on smaller models
+### Potentially integrate WebGPU to run through real examples on smaller models
+
+### Potentially include a way to generate a pytorch model from architecture specifications

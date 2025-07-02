@@ -321,5 +321,7 @@ textarea {
 .view-children {
     display: flex;
     flex-direction: column;
-    padding-left: 24px;
+    padding-left: 9px;
+    margin-left: 13px;
+    border-left: 2px solid var(--shape-fill-color);
 }

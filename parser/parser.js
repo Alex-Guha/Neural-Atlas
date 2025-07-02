@@ -89,7 +89,7 @@ function buildComponent(componentID, viewDetails, viewName, parentComponentChain
 
     // Prevents recursive definition loops, either as self-references or cyclical references
     if (parentComponentChain.includes(componentID)) {
-        console.error(`Cyclical reference detected in component ${componentID}.`);
+        console.error(`Cyclical reference detected at component ${componentID}. Parents: ${parentComponentChain.join(' -> ')}`);
         return;
     }
     const componentChain = [...parentComponentChain, componentID];
