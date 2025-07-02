@@ -2,14 +2,13 @@ import { drawContent } from '../core/render.js';
 import { applyTheme, invertTheme } from '../utils/themeUtils.js';
 import { saveSettings, clearArchitectures } from '../utils/storage.js';
 
-import { globalState } from '../utils/state.js'
+import { globalState, setSidebarState } from '../utils/state.js'
 import * as DEFAULTS from '../utils/defaults.js';
 import * as THEMES from '../utils/themes.js';
 
 // Handles the click event for the settings button
 export const createSettings = (event) => {
     event.stopPropagation();
-    globalState.sidebarPersistent = true;
 
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
@@ -99,6 +98,7 @@ function createDropdownSetting(setting) {
         saveSettings();
         drawContent();
         createSettings(e);
+        setSidebarState('settings-button');
     });
 
     container.appendChild(label);
@@ -140,9 +140,11 @@ function createToggleSetting(setting) {
             invertTheme(globalState.currentTheme, document.documentElement);
             drawContent();
             createSettings(e);
+            setSidebarState('settings-button');
         } else if (setting.noRedraw ?? true) {
             drawContent();
             createSettings(e);
+            setSidebarState('settings-button');
         }
         saveSettings();
     });

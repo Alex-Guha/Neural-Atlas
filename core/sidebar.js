@@ -1,13 +1,13 @@
 import { navigateTo } from '../core/navigation.js';
 
-import { globalState } from '../utils/state.js'
+import { globalState, setSidebarState } from '../utils/state.js'
 
 // Attach a click listener to the background (SVG) to reset the sidebar
 d3.select('#svg').on('click', resetSidebar);
 
 // Resets the sidebar to its default state
 export function resetSidebar() {
-    globalState.sidebarPersistent = false;
+    setSidebarState(null);
     updateInfo('');
     updateReferences();
 
@@ -58,7 +58,7 @@ export function attachReferenceEventListeners(element) {
 export function attachDetailEventListeners(element) {
     element.on('dblclick touchend', (event) => {
         event.stopPropagation();
-        globalState.sidebarPersistent = false;
+        setSidebarState(null);
 
         // Handle touch events for mobile devices
         if (event.type === 'touchend') {
@@ -80,15 +80,15 @@ export function attachDetailEventListeners(element) {
 // Generic event listener for updating the sidebar
 export function attachElementEventListeners(element) {
     element.on('mouseover', (event) => {
-        if (!globalState.sidebarPersistent) updateSidebar(event);
+        if (globalState.sidebarState === null) updateSidebar(event);
     })
         .on('click', (event) => {
             event.stopPropagation(); // Prevent the background click
-            globalState.sidebarPersistent = true;
+            setSidebarState('element');
             updateSidebar(event);
         })
         .on('mouseout', () => {
-            if (!globalState.sidebarPersistent) resetSidebar();
+            if (globalState.sidebarState === null) resetSidebar();
         })
         .style('cursor', 'pointer');
 }

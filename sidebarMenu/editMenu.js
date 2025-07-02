@@ -4,7 +4,7 @@ import { updateInfo } from '../core/sidebar.js';
 import { saveArchitectures } from '../utils/storage.js';
 import { serializeArchitecture, parseArchitectureContent } from '../parser/parseArchitectureFormat.js';
 
-import { globalState } from '../utils/state.js'
+import { globalState, setSidebarState } from '../utils/state.js'
 
 
 // ==========================
@@ -14,7 +14,6 @@ import { globalState } from '../utils/state.js'
 // Handles the click event for the nav edit button
 export const showEditOptions = (event) => {
     event.stopPropagation();
-    globalState.sidebarPersistent = true;
 
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
@@ -87,6 +86,7 @@ function createArchitectureEditor(architectureText = '') {
     // - Ideally indentation should be clearer
     // - users should be able to add components from a defined list instead of typing them out - for now, think of a clever way to show what is available
     // TODO Another possible alternative is to use editable divs in a vertical flexbox, probably way mroe difficult though
+    
     const textarea = document.createElement('textarea');
     textarea.id = 'architecture-editor';
     textarea.textContent = architectureText;
@@ -123,8 +123,8 @@ function createArchitectureEditor(architectureText = '') {
         globalState.architectures[architectureName] = Object.values(newArchitecture)[0];
         saveArchitectures();
         navigateTo(architectureName);
-        createArchitectureEditor(newArchitectureText);
-        globalState.sidebarPersistent = true;
+        createArchitectureEditor(newArchitectureText); // TODO new architecture name is not updated in the editor
+        setSidebarState('edit-button');
     };
 
     // Add keyboard shortcut for Ctrl+S or Cmd+S

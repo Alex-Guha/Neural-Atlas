@@ -4,7 +4,7 @@ import { showViews } from '../sidebarMenu/viewMenu.js';
 import { createSettings } from '../sidebarMenu/settingsMenu.js';
 import { parseArchitecture, parseDetail } from '../parser/parser.js';
 import { resetZoom } from '../utils/zoom.js';
-import { globalState } from '../utils/state.js'
+import { globalState, setSidebarState } from '../utils/state.js'
 
 import * as components from '../standard_items/components.js';
 
@@ -68,7 +68,11 @@ export const drawNavigation = () => {
 
         // Before 0.23 scaling and 45 degree rotation: M-5-52Q-18-52-18-39V37Q-18 39-17 41L-2 62Q0 64 2 62L17 41Q18 39 18 37V-39Q18-52 5-52ZM18 37Q13 29 8 37 0 47-8 37-13 29-18 37V-32H18Z
         // Old alternate version: M-5-52.5Q-18-52.5-18-39.5V36.5Q-18 38.5-17 40.5L-2 61.5Q0 63.5 2 61.5L17 40.5Q18 38.5 18 36.5V-39.5Q18-52.5 5-52.5ZM-5-46.5H5Q12-46.5 12-39.5H-12Q-12-46.5-5-46.5ZM12 32.5Q9 28.5 6 32.5 0 40.5-6 32.5-9 28.5-12 32.5V-33.5H12ZM-12 38.5Q-9 34.5-6 38.5 0 44.5 6 38.5 9 34.5 12 38.5L0 55.5Z
-        edit: "M7.6438-9.2702q-2.1142-2.1142-4.2285 0L-8.9449 3.0901q-.3253.3253-.4879.8132l-.9758 5.8548q0 .6505.6505.6505l5.8548-.9758q.4879-.1626.8132-.4879L9.2702-3.4153q2.1142-2.1142 0-4.2285ZM-3.0901 8.9449q.4879-2.1142-1.6263-1.6263-2.9274.3253-2.6022-2.6022.4879-2.1142-1.6263-1.6263L2.2769-8.1317 8.1317-2.2769Z"
+        edit: "M7.6438-9.2702q-2.1142-2.1142-4.2285 0L-8.9449 3.0901q-.3253.3253-.4879.8132l-.9758 5.8548q0 .6505.6505.6505l5.8548-.9758q.4879-.1626.8132-.4879L9.2702-3.4153q2.1142-2.1142 0-4.2285ZM-3.0901 8.9449q.4879-2.1142-1.6263-1.6263-2.9274.3253-2.6022-2.6022.4879-2.1142-1.6263-1.6263L2.2769-8.1317 8.1317-2.2769Z",
+
+        // Old alternate version: M-3 9c0 5 6 5 6 0V2C3-3-3-3-3 2ZM0-11A1 1 0 010-5 1 1 0 010-11
+        // M-2 6c0 3 4 3 4 0V0C2-3-2-3-2 0ZM0-8A1 1 0 010-4 1 1 0 010-8m0-4A12 12 90 110 12 12 12 90 110-12
+        info: "M0-11a1.1 1.1 90 000 4.4 1.1 1.1 90 000-4.4zM-2.2-1.1c0-3.3 4.4-3.3 4.4 0v9.9c0 3.3-4.4 3.3-4.4 0z"
     };
 
     navigation.selectAll('.nav-button').remove();
@@ -78,6 +82,7 @@ export const drawNavigation = () => {
     drawButton('reset-button', 150, svg_paths.reset, resetZoom, true);
     drawButton('settings-button', 200, svg_paths.settings, createSettings, true);
     drawButton('edit-button', 250, svg_paths.edit, showEditOptions, true);
+    drawButton('info-button', 300, svg_paths.info, showViews, true); //TODO
 };
 
 function drawButton(id, x, shape, clickHandler, isEnabled) {
@@ -86,6 +91,7 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
         'settings-button': { strokeWidth: 1.2, fillOnHover: true },
         'views-button': { strokeWidth: 1, fillOnHover: true },
         'edit-button': { strokeWidth: 1.4, fillOnHover: false },
+        'info-button': { strokeWidth: 1.2, fillOnHover: true },
         'default': { strokeWidth: 2, fillOnHover: false }
     };
 
@@ -117,50 +123,106 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
         }
     };
 
+    // Use hover state if button has persistent hover, otherwise use normal state
+    const initialState = (globalState.sidebarState === id) && isEnabled ? states.hover : states.normal;
+
     // Button background
     const buttonRect = group.append('rect')
         .attr('width', 40)
         .attr('height', 40)
         .attr('rx', 5)
         .attr('ry', 5)
-        .attr('fill', states.normal.fill)
-        .attr('stroke', states.normal.stroke);
+        .attr('fill', initialState.fill)
+        .attr('stroke', initialState.stroke);
 
     // Button icon
     const buttonIcon = group.append('path')
         .attr('d', shape)
-        .attr('fill', states.normal.pathFill)
-        .attr('stroke', states.normal.pathStroke)
+        .attr('fill', initialState.pathFill)
+        .attr('stroke', initialState.pathStroke)
         .attr('stroke-width', config.strokeWidth)
         .attr('stroke-linecap', 'round')
         .attr('stroke-linejoin', 'round')
         .attr('transform', 'translate(20, 20)');
 
-    // Future QoL: make the settings and views buttons mouseover behavior persist when the button has been clicked (i.e. when the settings or views menu is open), and reset when the resetSidebar event is called
     if (isEnabled) {
         // Click handler
         group.on('click', function (event) {
-            // Check if the handler expects an event parameter
+            
+            // Set persistent hover for menu buttons
             if (clickHandler === showViews || clickHandler === createSettings || clickHandler === showEditOptions) {
+                setSidebarState(id);
                 clickHandler(event);
             } else {
+                setSidebarState(null);
                 clickHandler();
             }
         });
 
         // Hover effects
         group.on('mouseover', function () {
-            buttonRect.attr('fill', states.hover.fill);
-            buttonIcon
-                .attr('stroke', states.hover.pathStroke)
-                .attr('fill', states.hover.pathFill);
+            // Only apply hover effect if not in persistent state
+            if (globalState.sidebarState !== id) {
+                buttonRect.attr('fill', states.hover.fill);
+                buttonIcon
+                    .attr('stroke', states.hover.pathStroke)
+                    .attr('fill', states.hover.pathFill);
+            }
         });
 
         group.on('mouseout', function () {
-            buttonRect.attr('fill', states.normal.fill);
-            buttonIcon
-                .attr('stroke', states.normal.pathStroke)
-                .attr('fill', states.normal.pathFill);
+            // Only revert hover effect if not in persistent state
+            if (globalState.sidebarState !== id) {
+                buttonRect.attr('fill', states.normal.fill);
+                buttonIcon
+                    .attr('stroke', states.normal.pathStroke)
+                    .attr('fill', states.normal.pathFill);
+            }
         });
     }
+}
+
+// Helper function to update a button's visual state
+export function updateButtonState(buttonId) {
+    const buttonGroup = d3.select(`#${buttonId}`);
+    if (buttonGroup.empty()) return;
+
+    const buttonRect = buttonGroup.select('rect');
+    const buttonIcon = buttonGroup.select('path');
+    
+    // Get button configuration
+    const buttonConfig = {
+        'settings-button': { strokeWidth: 1.2, fillOnHover: true },
+        'views-button': { strokeWidth: 1, fillOnHover: true },
+        'edit-button': { strokeWidth: 1.4, fillOnHover: false },
+        'info-button': { strokeWidth: 1.2, fillOnHover: true },
+        'default': { strokeWidth: 2, fillOnHover: false }
+    };
+    const config = buttonConfig[buttonId] || buttonConfig.default;
+    
+    // Determine visual state
+    const states = {
+        normal: {
+            fill: globalState.currentTheme.BUTTON_FILL,
+            stroke: globalState.currentTheme.BUTTON_STROKE,
+            pathStroke: globalState.currentTheme.BUTTON_ARROW,
+            pathFill: 'none'
+        },
+        hover: {
+            fill: globalState.currentTheme.BUTTON_HOVER_FILL,
+            stroke: globalState.currentTheme.BUTTON_STROKE,
+            pathStroke: globalState.currentTheme.BUTTON_HOVER_ARROW,
+            pathFill: config.fillOnHover ? globalState.currentTheme.BUTTON_HOVER_ARROW : 'none'
+        }
+    };
+    
+    const targetState = (globalState.sidebarState === buttonId) ? states.hover : states.normal;
+    
+    buttonRect
+        .attr('fill', targetState.fill)
+        .attr('stroke', targetState.stroke);
+    
+    buttonIcon
+        .attr('stroke', targetState.pathStroke)
+        .attr('fill', targetState.pathFill);
 }

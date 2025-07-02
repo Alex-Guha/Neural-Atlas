@@ -104,8 +104,6 @@ The original code has been completely rewritten and significantly expanded.
 
 ## Low Priority
 
-### Look into the limits of github.io sites, might want to host elsewhere
-
 ### Comparison
 Add the ability to compare two architectures visually (highlighting the differences between generations)
 
@@ -120,9 +118,6 @@ Add the ability to compare two architectures visually (highlighting the differen
   - This should vanish when the user clicks anything
   - There can be an info button in a corner to reopen the overlay
 - https://chatgpt.com/share/685b28f4-c98c-8001-942b-a7ccb2da2a32
-
-#### Navigation
-- Make the settings and views buttons mouseover behavior persist when the button has been clicked (i.e. when the settings or views menu is open), and reset when the resetSidebar event is called
 
 #### Arrows
 - rewrite to allow for multiple previous elements and thus multiple arrows

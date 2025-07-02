@@ -1,11 +1,10 @@
 import { navigateTo } from '../core/navigation.js';
 
-import { globalState } from '../utils/state.js'
+import { globalState, setSidebarState } from '../utils/state.js'
 
 // Handles the click event for the nav menu button
 export const showViews = (event) => {
     event.stopPropagation();
-    globalState.sidebarPersistent = true;
 
     const infoElement = document.getElementById('info');
     infoElement.innerHTML = '';
@@ -38,6 +37,7 @@ export const showViews = (event) => {
         architectureName.addEventListener('click', () => {
             navigateTo(architecture);
             showViews(event);
+            setSidebarState('views-button');
         });
 
         archMenu.appendChild(architectureName);
@@ -90,6 +90,7 @@ function buildViewTree(viewName, parentContainer) {
     viewLabel.addEventListener('click', () => {
         navigateTo(viewName);
         showViews(event);
+        setSidebarState('views-button');
     });
 
     viewRow.appendChild(viewLabel);
