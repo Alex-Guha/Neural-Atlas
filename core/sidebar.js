@@ -95,8 +95,13 @@ export function attachElementEventListeners(element) {
 
 // Creates the references box
 export function updateReferences(elementReferences = null) {
-    const referencesList = document.getElementById('references-list');
-    referencesList.innerHTML = '';
+    const referencesBox = document.getElementById('references');
+    referencesBox.innerHTML = '';
+    referencesBox.appendChild(document.createElement('h3')).textContent = 'References';
+    referencesBox.style = '';
+
+    const referencesList = document.createElement('ul');
+    referencesList.id = 'references-list';
 
     const refsToRender = JSON.parse(elementReferences)
         || globalState.views[globalState.currentView]
@@ -123,12 +128,13 @@ export function updateReferences(elementReferences = null) {
             referencesList.appendChild(li);
         });
     }
+    referencesBox.appendChild(referencesList);
 }
 
 // Creates the info box
 export function updateInfo(content) {
     const element = document.getElementById('info');
-    element.textContent = "";
+    element.innerHTML = ""; // Use innerHTML for consistency with appendChild usage
 
     // Replace placeholders with architecture property values
     content = replacePlaceholders(content, globalState.currentProperties || {});

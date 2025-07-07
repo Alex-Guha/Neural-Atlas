@@ -3,6 +3,7 @@ import { navigateTo } from '../core/navigation.js';
 import { updateInfo } from '../core/sidebar.js';
 import { saveArchitectures } from '../utils/storage.js';
 import { serializeArchitecture, parseArchitectureContent } from '../parser/parseArchitectureFormat.js';
+import { displayError } from '../utils/error.js';
 
 import { globalState, setSidebarState } from '../utils/state.js'
 
@@ -36,7 +37,7 @@ export const showEditOptions = (event) => {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
             updateInfo('');
-            // TODO create a new state variable to track if in edit mode, and modify other event listeners accordingly
+            // TODO track if in edit mode, and modify other event listeners accordingly
             // Make the edit button a toggle (only toggles on when one of the below options is clicked instead of when the button is clicked)
             // Prevent background click from closing the sidebar
 
@@ -85,8 +86,11 @@ function createArchitectureEditor(architectureText = '') {
     // var myCodeMirror = CodeMirror.fromTextArea(textarea);
     // - Ideally indentation should be clearer
     // - users should be able to add components from a defined list instead of typing them out - for now, think of a clever way to show what is available
-    // TODO Another possible alternative is to use editable divs in a vertical flexbox, probably way mroe difficult though
-    
+    // TODO Another possible alternative is to use editable divs in a vertical flexbox, probably way more difficult though
+
+    const infoElement = document.getElementById('info');
+    infoElement.innerHTML = '';
+
     const textarea = document.createElement('textarea');
     textarea.id = 'architecture-editor';
     textarea.textContent = architectureText;
@@ -105,9 +109,7 @@ function createArchitectureEditor(architectureText = '') {
         try {
             newArchitecture = parseArchitectureContent(newArchitectureText);
         } catch (error) {
-            console.warn(`Error parsing architecture:\n${error.message}`);
-            // TODO Display this in app instead of using confirm
-            confirm(`Error parsing architecture:\n${error.message}\nPlease check the syntax and try again.`);
+            displayError(`Error Parsing Architecture\n${error.message}\nPlease check the syntax and try again.`);
             return;
         }
 
@@ -123,7 +125,7 @@ function createArchitectureEditor(architectureText = '') {
         globalState.architectures[architectureName] = Object.values(newArchitecture)[0];
         saveArchitectures();
         navigateTo(architectureName);
-        createArchitectureEditor(newArchitectureText); // TODO new architecture name is not updated in the editor
+        createArchitectureEditor(serializeArchitecture(architectureName, globalState.architectures[architectureName]));
         setSidebarState('edit-button');
     };
 
@@ -139,7 +141,6 @@ function createArchitectureEditor(architectureText = '') {
     // Add click handler for the apply button
     applyButton.addEventListener('click', applyChanges);
 
-    const infoElement = document.getElementById('info');
     infoElement.appendChild(textarea);
     infoElement.appendChild(applyButton);
 }

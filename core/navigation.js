@@ -5,6 +5,8 @@ import { createSettings } from '../sidebarMenu/settingsMenu.js';
 import { parseArchitecture, parseDetail } from '../parser/parser.js';
 import { resetZoom } from '../utils/zoom.js';
 import { globalState, setSidebarState } from '../utils/state.js'
+import { displayError } from '../utils/error.js';
+import { DEFAULT_VIEW } from '../utils/defaults.js';
 
 import * as components from '../standard_items/components.js';
 
@@ -23,8 +25,8 @@ export const navigateTo = (view) => {
         } else if (components[view])
             globalState.views[view] = parseDetail(view);
         else {
-            console.error(`View ${view} not found.`);
-            return;
+            displayError(`Failed to Change Views\nView ${view} not found.\nFalling back to default.`);
+            view = DEFAULT_VIEW;
         }
     } else if (globalState.architectures[view]) {
         globalState.currentArchitecture = view;
@@ -148,7 +150,7 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
     if (isEnabled) {
         // Click handler
         group.on('click', function (event) {
-            
+
             // Set persistent hover for menu buttons
             if (clickHandler === showViews || clickHandler === createSettings || clickHandler === showEditOptions) {
                 setSidebarState(id);
@@ -189,7 +191,7 @@ export function updateButtonState(buttonId) {
 
     const buttonRect = buttonGroup.select('rect');
     const buttonIcon = buttonGroup.select('path');
-    
+
     // Get button configuration
     const buttonConfig = {
         'settings-button': { strokeWidth: 1.2, fillOnHover: true },
@@ -199,7 +201,7 @@ export function updateButtonState(buttonId) {
         'default': { strokeWidth: 2, fillOnHover: false }
     };
     const config = buttonConfig[buttonId] || buttonConfig.default;
-    
+
     // Determine visual state
     const states = {
         normal: {
@@ -215,13 +217,13 @@ export function updateButtonState(buttonId) {
             pathFill: config.fillOnHover ? globalState.currentTheme.BUTTON_HOVER_ARROW : 'none'
         }
     };
-    
+
     const targetState = (globalState.sidebarState === buttonId) ? states.hover : states.normal;
-    
+
     buttonRect
         .attr('fill', targetState.fill)
         .attr('stroke', targetState.stroke);
-    
+
     buttonIcon
         .attr('stroke', targetState.pathStroke)
         .attr('fill', targetState.pathFill);

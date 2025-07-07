@@ -34,6 +34,9 @@ export const THEME = {
     SCROLLBAR_BACKGROUND: '#f1f1f1',
     SCROLLBAR_BUTTON: '#888',
     SCROLLBAR_HOVER: '#555',
+
+    ERROR_BACKGROUND: '#3b2929',
+    ERROR_TEXT: '#e0e0e0',
 };
 
 export const SHAPE = {

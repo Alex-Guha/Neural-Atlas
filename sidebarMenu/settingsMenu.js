@@ -1,6 +1,7 @@
 import { drawContent } from '../core/render.js';
 import { applyTheme, invertTheme } from '../utils/themeUtils.js';
 import { saveSettings, clearArchitectures } from '../utils/storage.js';
+import { confirmAction } from '../utils/error.js';
 
 import { globalState, setSidebarState } from '../utils/state.js'
 import * as DEFAULTS from '../utils/defaults.js';
@@ -45,12 +46,21 @@ export const createAdvancedSettings = (event) => {
 
     const clearArchitecturesButton = document.createElement('button');
     clearArchitecturesButton.textContent = 'Clear Saved Architectures';
-    clearArchitecturesButton.addEventListener('click', () => {
-        if (confirm('Are you sure you want to clear all saved architectures? This action cannot be undone.')) {
+    clearArchitecturesButton.addEventListener('click', async () => {
+        if (await confirmAction('Clear Saved Architectures\nAre you sure you want to clear all saved architectures?\nThis action cannot be undone.')) {
             clearArchitectures();
         }
     });
     infoElement.appendChild(clearArchitecturesButton);
+
+    const returnButton = document.createElement('button');
+    returnButton.textContent = 'Return';
+    returnButton.style.marginTop = 'auto';
+    returnButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        createSettings(e);
+    });
+    infoElement.appendChild(returnButton);
 };
 
 // Draws the dropdown menu in the settings

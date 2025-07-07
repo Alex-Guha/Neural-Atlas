@@ -41,6 +41,8 @@ export function saveArchitectures() {
 
 export function clearArchitectures() {
     localStorage.removeItem('architectures');
+    localStorage.removeItem('currentArchitecture');
+    globalState.viewStructure = {};
     parseArchitectureFile('../standard_items/architectures.txt')
         .then(architectures => {
             globalState.architectures = architectures;
