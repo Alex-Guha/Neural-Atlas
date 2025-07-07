@@ -10,6 +10,7 @@ export const THEME = {
 
     SHAPE_FILL: '#3a3a3a',
     SHAPE_STROKE: '#555',
+    SHAPE_HOVER_FILL: '#4a4a4a', // TODO play with some different fill colors
     OPACITY: 0.5,
 
     TEXT_COLOR: ['#ffffff', '#777', '#555', '#333'],
@@ -19,13 +20,13 @@ export const THEME = {
     LINK: '#00ffff',
 
     BUTTON_FILL: '#3a3a3a',
-    BUTTON_STROKE: '#555',
-    BUTTON_ARROW: '#e0e0e0',
+    BUTTON_BORDER: '#555',
+    BUTTON_SYMBOL_COLOR: '#e0e0e0',
     BUTTON_HOVER_FILL: '#4a4a4a',
-    BUTTON_HOVER_ARROW: '#ffffff',
+    BUTTON_HOVER_SYMBOL_COLOR: '#ffffff',
     DISABLED_BUTTON_FILL: '#2a2a2a',
-    DISABLED_BUTTON_STROKE: '#3a3a3a',
-    DISABLED_BUTTON_ARROW: '#4a4a4a',
+    DISABLED_BUTTON_BORDER: '#3a3a3a',
+    DISABLED_BUTTON_SYMBOL_COLOR: '#4a4a4a',
 
     SLIDER_BACKGROUND: '#d0d0d0',
     SLIDER_BUTTON: '#3a3a3a',

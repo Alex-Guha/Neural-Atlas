@@ -86,6 +86,9 @@ export function attachElementEventListeners(element) {
             event.stopPropagation(); // Prevent the background click
             setSidebarState('element');
             updateSidebar(event);
+            if (element.node().tagName === 'rect' || element.node().tagName === 'polygon') {
+                element.classed('force-hover', true);
+            }
         })
         .on('mouseout', () => {
             if (globalState.sidebarState === null) resetSidebar();

@@ -82,8 +82,9 @@ export const drawNavigation = () => {
     drawButton('back-button', 50, svg_paths.back, navigateBack, undoHistory.length > 0);
     drawButton('forward-button', 100, svg_paths.forward, navigateForward, redoHistory.length > 0);
     drawButton('reset-button', 150, svg_paths.reset, resetZoom, true);
-    drawButton('settings-button', 200, svg_paths.settings, createSettings, true);
     drawButton('edit-button', 250, svg_paths.edit, showEditOptions, true);
+    // TODO Move these to the right corner of the content area
+    drawButton('settings-button', 200, svg_paths.settings, createSettings, true);
     drawButton('info-button', 300, svg_paths.info, showViews, true); //TODO
 };
 
@@ -113,15 +114,15 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
     const states = {
         normal: {
             fill: isEnabled ? globalState.currentTheme.BUTTON_FILL : globalState.currentTheme.DISABLED_BUTTON_FILL,
-            stroke: isEnabled ? globalState.currentTheme.BUTTON_STROKE : globalState.currentTheme.DISABLED_BUTTON_STROKE,
-            pathStroke: isEnabled ? globalState.currentTheme.BUTTON_ARROW : globalState.currentTheme.DISABLED_BUTTON_ARROW,
+            border: isEnabled ? globalState.currentTheme.BUTTON_BORDER : globalState.currentTheme.DISABLED_BUTTON_BORDER,
+            pathStroke: isEnabled ? globalState.currentTheme.BUTTON_SYMBOL_COLOR : globalState.currentTheme.DISABLED_BUTTON_SYMBOL_COLOR,
             pathFill: 'none'
         },
         hover: {
             fill: globalState.currentTheme.BUTTON_HOVER_FILL,
-            stroke: globalState.currentTheme.BUTTON_STROKE,
-            pathStroke: globalState.currentTheme.BUTTON_HOVER_ARROW,
-            pathFill: config.fillOnHover ? globalState.currentTheme.BUTTON_HOVER_ARROW : 'none'
+            border: globalState.currentTheme.BUTTON_BORDER,
+            pathStroke: globalState.currentTheme.BUTTON_HOVER_SYMBOL_COLOR,
+            pathFill: config.fillOnHover ? globalState.currentTheme.BUTTON_HOVER_SYMBOL_COLOR : 'none'
         }
     };
 
@@ -135,7 +136,7 @@ function drawButton(id, x, shape, clickHandler, isEnabled) {
         .attr('rx', 5)
         .attr('ry', 5)
         .attr('fill', initialState.fill)
-        .attr('stroke', initialState.stroke);
+        .attr('stroke', initialState.border);
 
     // Button icon
     const buttonIcon = group.append('path')
@@ -206,15 +207,15 @@ export function updateButtonState(buttonId) {
     const states = {
         normal: {
             fill: globalState.currentTheme.BUTTON_FILL,
-            stroke: globalState.currentTheme.BUTTON_STROKE,
-            pathStroke: globalState.currentTheme.BUTTON_ARROW,
+            border: globalState.currentTheme.BUTTON_BORDER,
+            pathStroke: globalState.currentTheme.BUTTON_SYMBOL_COLOR,
             pathFill: 'none'
         },
         hover: {
             fill: globalState.currentTheme.BUTTON_HOVER_FILL,
-            stroke: globalState.currentTheme.BUTTON_STROKE,
-            pathStroke: globalState.currentTheme.BUTTON_HOVER_ARROW,
-            pathFill: config.fillOnHover ? globalState.currentTheme.BUTTON_HOVER_ARROW : 'none'
+            border: globalState.currentTheme.BUTTON_BORDER,
+            pathStroke: globalState.currentTheme.BUTTON_HOVER_SYMBOL_COLOR,
+            pathFill: config.fillOnHover ? globalState.currentTheme.BUTTON_HOVER_SYMBOL_COLOR : 'none'
         }
     };
 
@@ -222,7 +223,7 @@ export function updateButtonState(buttonId) {
 
     buttonRect
         .attr('fill', targetState.fill)
-        .attr('stroke', targetState.stroke);
+        .attr('stroke', targetState.border);
 
     buttonIcon
         .attr('stroke', targetState.pathStroke)

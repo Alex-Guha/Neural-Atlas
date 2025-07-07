@@ -29,6 +29,7 @@ export function applyTheme(newTheme, root) {
 
     root.style.setProperty('--shape-fill-color', newTheme.SHAPE_FILL);
     root.style.setProperty('--shape-stroke-color', newTheme.SHAPE_STROKE);
+    root.style.setProperty('--shape-hover-fill-color', newTheme.SHAPE_HOVER_FILL);
     root.style.setProperty('--opacity', newTheme.OPACITY);
 
     root.style.setProperty('--arrow-color', newTheme.ARROW_COLOR);
@@ -36,13 +37,13 @@ export function applyTheme(newTheme, root) {
     root.style.setProperty('--link-color', newTheme.LINK);
 
     root.style.setProperty('--button-fill-color', newTheme.BUTTON_FILL);
-    root.style.setProperty('--button-stroke-color', newTheme.BUTTON_STROKE);
-    root.style.setProperty('--button-arrow-color', newTheme.BUTTON_ARROW);
+    root.style.setProperty('--button-border-color', newTheme.BUTTON_BORDER);
+    root.style.setProperty('--button-symbol-color', newTheme.BUTTON_SYMBOL_COLOR);
     root.style.setProperty('--button-hover-fill-color', newTheme.BUTTON_HOVER_FILL);
-    root.style.setProperty('--button-hover-arrow-color', newTheme.BUTTON_HOVER_ARROW);
+    root.style.setProperty('--button-hover-symbol-color', newTheme.BUTTON_HOVER_SYMBOL_COLOR);
     root.style.setProperty('--disabled-button-fill-color', newTheme.DISABLED_BUTTON_FILL);
-    root.style.setProperty('--disabled-button-stroke-color', newTheme.DISABLED_BUTTON_STROKE);
-    root.style.setProperty('--disabled-button-arrow-color', newTheme.DISABLED_BUTTON_ARROW);
+    root.style.setProperty('--disabled-button-border-color', newTheme.DISABLED_BUTTON_BORDER);
+    root.style.setProperty('--disabled-button-symbol-color', newTheme.DISABLED_BUTTON_SYMBOL_COLOR);
 
     root.style.setProperty('--slider-background-color', newTheme.SLIDER_BACKGROUND);
     root.style.setProperty('--slider-button-color', newTheme.SLIDER_BUTTON);

@@ -78,9 +78,6 @@ The original code has been completely rewritten and significantly expanded.
 ### QoL
 #### Make double-clickable items more noticeable, and add a notice at the top or bottom of the info box to tell the user the item is clickable
 #### Add a link to the github repo
-#### Allow for non-sequential component combination in architectures
-- i.e. if multiple components want to branch off one.
-- Would require the ability to specify a previous in the architecture
 #### Architecture changing settings
 - batch tensor
 - inference vs training
@@ -94,6 +91,9 @@ The original code has been completely rewritten and significantly expanded.
   - we might want to keep a visit record on views and prune ones that aren't visited, depends how large views can conceivably be
 #### Unify text and latexText
 - Detect latex text by normal conventions like looking for a $ symbol at the start
+#### Element hover
+- Force the element hover styling when the element's text is clicked as well
+- Will probably be more tricky to implement than it has any right to be
 
 
 ### Write a README
@@ -131,7 +131,7 @@ Add the ability to compare two architectures visually (highlighting the differen
 - Make a toggle to show the graph structure by drawing lines between components instead of rendering them, and tacking on the component name
 - Maybe: The current method of storing positions can't handle referencing an item that hasn't been drawn yet, which prevents arrow cycles. This might be fine though, since it also prevents circular dependencies
 
-#### Test
+#### Text
 - Auto split text into multiple lines based on textObject width, if it exists
 
 ### Efficiency and Optimization
